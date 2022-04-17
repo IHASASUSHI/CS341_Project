@@ -13,16 +13,16 @@ public class Point : MonoBehaviour
         this.y = y;
     }
 
-    public Vector2 toVector(x,y) {
-        return new Vector2(x,y);
+    public Vector2 toVector(int x, int y) {
+        return new Vector2(x, y);
     }
 
     public static Point fromVector(Vector2 v) {
-        return new Point((int)v.x, v.y);
+        return new Point((int) v.x, (int) v.y);
     }
 
     public static Point fromVector(Vector3 v) {
-        return new Point((int)v.x, v.y);
+        return new Point((int)v.x, (int) v.y);
     }
 
     public static Point clone(Point p) {

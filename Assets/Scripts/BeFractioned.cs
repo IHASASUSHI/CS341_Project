@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class BeFractioned : MonoBehaviour
 {
+    public ArrayLayout boardLayout;
     int width = 10;
     int height = 10;
     Node[,] board;
 
-    System.Random Random;
+    System.Random random;
 
     // Start is called before the first frame update
     void Start()
@@ -20,11 +21,18 @@ public class BeFractioned : MonoBehaviour
     {
         string seed = "0";
         random = new System.Random(seed.GetHashCode());
+
+        InitializeBoard();
     }
 
     void InitializeBoard()
     {
         board = new Node[this.width, this.height];
+        for(int y = 0; y < height; y++){
+            for(int x = 0; x < width; x++) {
+                board[x, y] = new Node(-1, new Point(x, y));
+            }
+        }
 
     }
 
@@ -39,10 +47,10 @@ public class BeFractioned : MonoBehaviour
 public class Node
 {
     public int value; //represents the object at node
-    public point index;
+    public Point index;
 
     public Node (int value, Point index) {
-        this.value = v;
-        this.index = i;
+        this.value = value;
+        this.index = index;
     }
 }
