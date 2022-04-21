@@ -200,6 +200,7 @@ GameObject:
   m_Component:
   - component: {fileID: 326122755}
   - component: {fileID: 326122754}
+  - component: {fileID: 326122756}
   m_Layer: 0
   m_Name: BeFractioned
   m_TagString: Untagged
@@ -219,6 +220,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e1f0a768c031234baa9c22738331c48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boardLayout:
+    grid: {fileID: 0}
+    rows:
+    - row: 00000000000000000000
+    - row: 00000000000000000000
+    - row: 00000000000000000000
+    - row: 00000000000000000000
+    - row: 00000000000000000000
+    - row: 00000000000000000000
+    - row: 00000000000000000000
+    - row: 00000000000000000000
+    - row: 00000000000000000000
+    - row: 00000000000000000000
+  pieces:
+  - {fileID: 7086606104257924489, guid: 34f6321b206afab459fb7c8d37989456, type: 3}
+  - {fileID: -8166966530815011495, guid: 34f6321b206afab459fb7c8d37989456, type: 3}
+  - {fileID: -488248382649040768, guid: 34f6321b206afab459fb7c8d37989456, type: 3}
+  - {fileID: -7105913188517789750, guid: 34f6321b206afab459fb7c8d37989456, type: 3}
+  - {fileID: 5528609633622603068, guid: 2c97df9695607b04c92ec362851a0890, type: 3}
+  gameBoard: {fileID: 1902705638}
+  nodePiece: {fileID: 4472926955625980874, guid: e0edfee1799e7454bb5a83dad59a00aa, type: 3}
 --- !u!4 &326122755
 Transform:
   m_ObjectHideFlags: 0
@@ -234,6 +256,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &326122756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 326122753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d41f50b3dfd4ba24cb9230d9afae5c4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
