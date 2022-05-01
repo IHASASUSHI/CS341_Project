@@ -56,7 +56,7 @@ public class MovePieces : MonoBehaviour
     public void DropPiece() {
         if(this.moving == null) return;
         Debug.Log("dropped");
-        if(!this.newIndex.Equals(this.moving.index)) this.game.FlipPieces(this.moving.index, this.newIndex);
+        if(!this.newIndex.Equals(this.moving.index)) this.game.FlipPieces(this.moving.index, this.newIndex, true);
         else game.ResetPiece(this.moving);
         this.game.ResetPiece(this.moving);
         this.moving = null;
