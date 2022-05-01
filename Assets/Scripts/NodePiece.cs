@@ -25,11 +25,11 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         this.rect = GetComponent<RectTransform>();
 
         this.value = value;
-        SetInddex(index);
+        SetIndex(index);
         this.img.sprite = piece;
     }
 
-    public void SetInddex(Point p) {
+    public void SetIndex(Point p) {
         this.index = p;
         ResetPosition();
         UpdateName();
@@ -48,7 +48,7 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         this.rect.anchoredPosition = Vector2.Lerp(this.rect.anchoredPosition, move, Time.deltaTime * 16f);
     }
 
-    public bool UpdatePeice() {
+    public bool UpdatePiece() {
         if(Vector2.Distance(this.rect.anchoredPosition, pos) > 1) {
             MovePositionTo(this.pos);
             this.updating = true;
