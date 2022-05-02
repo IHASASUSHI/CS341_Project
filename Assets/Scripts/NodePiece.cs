@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler
 {
     public int value;
     public Point index;
@@ -18,8 +18,9 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     bool updating;
     Image img;
+    Overlay highlight;
 
-    public void Initialize(int value, Point index, Sprite piece){
+    public void Initialize(int value, Point index, Sprite piece) {
         this.flipped = null;
         this.img = GetComponent<Image>();
         this.rect = GetComponent<RectTransform>();
@@ -27,12 +28,17 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         this.value = value;
         SetIndex(index);
         this.img.sprite = piece;
+        this.highlight = null;
     }
 
     public void SetIndex(Point p) {
         this.index = p;
         ResetPosition();
         UpdateName();
+    }
+
+    public void SetHighlight(Overlay highlight) {
+        this.highlight = highlight;
     }
 
     public void ResetPosition() {
@@ -61,6 +67,9 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
     }
 
+    public void Highlighted(bool yes) {
+        this.highlight.SetVisible(yes);
+    }
     void UpdateName() {
         transform.name = "Node [" + index.x + ", " + index.y + "]";
     }
@@ -68,9 +77,16 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public void OnPointerDown(PointerEventData eventData) {
         if(this.updating) return;
         MovePieces.Instance.MovePiece(this);
+        Highlight.Instance.MovePiece(this);
     }
 
     public void OnPointerUp(PointerEventData eventData) {
         MovePieces.Instance.DropPiece();
+        Highlight.Instance.DropPiece();
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        // Debug.Log(eventData.button);
     }
 }

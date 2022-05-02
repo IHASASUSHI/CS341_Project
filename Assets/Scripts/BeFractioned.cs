@@ -8,10 +8,13 @@ public class BeFractioned : MonoBehaviour
 
     [Header("UI Elements")]
     public Sprite[] pieces;
+    public Sprite[] highlights;
     public RectTransform gameBoard;
+    public RectTransform overlay;
 
     [Header("Prefabs")]
     public GameObject nodePiece;
+    public GameObject nodePieceOverlay;
 
     int width = 10;
     int height = 10;
@@ -93,6 +96,7 @@ public class BeFractioned : MonoBehaviour
 
             this.update.Add(pieceOne);
             this.update.Add(pieceTwo);
+            pieceTwo.SetHighlight(nodeOne.GetOverlay());
         }
         else
             ResetPiece(pieceOne);
@@ -108,12 +112,21 @@ public class BeFractioned : MonoBehaviour
 
                 int val = node.value;
                 if (val <= 0) continue;
-                GameObject p = Instantiate(nodePiece, gameBoard);
-                NodePiece piece = p.GetComponent<NodePiece>();
+                //highlight
+                GameObject p = Instantiate(nodePieceOverlay, overlay);
+                Overlay over = p.GetComponent<Overlay>();
                 RectTransform rect = p.GetComponent<RectTransform>();
                 rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
+                over.Initialize(new Point(x, y), highlights[0]);
+                //object
+                p = Instantiate(nodePiece, gameBoard);
+                NodePiece piece = p.GetComponent<NodePiece>();
+                rect = p.GetComponent<RectTransform>();
+                rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
                 piece.Initialize(val, new Point(x, y), pieces[val - 1]);
+                piece.SetHighlight(over);
                 node.SetPiece(piece);
+                node.SetOverlay(over);
             }
         }
     }
@@ -168,7 +181,6 @@ public class BeFractioned : MonoBehaviour
         }
         for (int i = 0; i < finishedUpdating.Count; i++)
         {
-            //NodePiece piece = finishedUpdating[i];
             FlippedPieces flip = getFlipped(finishedUpdating[i]);
             NodePiece flippedPiece = null;
 
@@ -229,6 +241,7 @@ public class BeFractioned : MonoBehaviour
                         NodePiece piece = got.getPiece();
 
                         node.SetPiece(piece);
+                        piece.SetHighlight(getNodeAtPoint(new Point(x, y)).GetOverlay());
                         this.update.Add(piece);
 
                         got.SetPiece(null);
@@ -394,11 +407,14 @@ public class Node
     public int value;
     public Point index;
     NodePiece piece;
+    Overlay overlay;
 
     public Node(int v, Point i)
     {
-        value = v;
-        index = i;
+        this.value = v;
+        this.index = i;
+        this.piece = null;
+        this.overlay = null;
     }
 
     public void SetPiece(NodePiece p)
@@ -409,9 +425,21 @@ public class Node
         piece.SetIndex(index);
     }
 
+    public void SetOverlay(Overlay overlay)
+    {
+        this.overlay = overlay;
+        if (piece == null) return;
+        overlay.SetIndex(index);
+    }
+
     public NodePiece getPiece()
     {
         return piece;
+    }
+
+    public Overlay GetOverlay()
+    {
+        return this.overlay;
     }
 }
 
