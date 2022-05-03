@@ -7,7 +7,7 @@ public class Highlight : MonoBehaviour
     public static Highlight Instance;
     BeFractioned game;
 
-    NodePiece highlighted;
+    List<NodePiece> highlighted;
     Point newIndex;
     Vector2 mouseStart;
 
@@ -20,30 +20,33 @@ public class Highlight : MonoBehaviour
     void Start()
     {
         this.game = GetComponent<BeFractioned>();
+        this.highlighted = new List<NodePiece>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(this.highlighted != null)
+        for (int i = 0; i < this.highlighted.Count; i++)
         {
-            Debug.Log("highlighting");
-            this.highlighted.Highlighted(true);
+            this.highlighted[i].Highlighted(true);
         }
     }
 
     public void MovePiece(NodePiece piece)
     {
-        if(this.highlighted != null) return;
-        this.highlighted = piece;
+        if(this.highlighted.Count != 0) return;
+        this.highlighted.Add(piece);
+        Debug.Log(this.highlighted.Count);
         this.mouseStart = Input.mousePosition;
     }
 
     public void DropPiece()
     {
-        if(this.highlighted == null) return;
-        Debug.Log("dropped");
-        this.highlighted.Highlighted(false);
-        this.highlighted = null;
+        if(this.highlighted.Count == 0) return;
+        for (int i = 0; i < this.highlighted.Count; i++)
+        {
+            this.highlighted[i].Highlighted(false);
+        }
+        this.highlighted.Clear();
     }
 }

@@ -87,6 +87,10 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        // Debug.Log(eventData.button);
+        if (eventData.eligibleForClick == true)
+        {
+            Debug.Log(this);
+            Highlight.Instance.MovePiece(this);
+        }
     }
 }
