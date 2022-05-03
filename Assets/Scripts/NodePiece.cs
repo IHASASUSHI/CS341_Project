@@ -89,7 +89,6 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     {
         if (eventData.eligibleForClick == true)
         {
-            Debug.Log(this);
             Highlight.Instance.MovePiece(this);
         }
     }

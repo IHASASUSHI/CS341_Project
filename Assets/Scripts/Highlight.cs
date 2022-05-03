@@ -34,7 +34,6 @@ public class Highlight : MonoBehaviour
 
     public void MovePiece(NodePiece piece)
     {
-        if(this.highlighted.Count != 0) return;
         this.highlighted.Add(piece);
         Debug.Log(this.highlighted.Count);
         this.mouseStart = Input.mousePosition;
