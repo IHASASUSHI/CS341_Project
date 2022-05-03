@@ -67,6 +67,10 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         }
     }
 
+    public Point GetPoint() {
+        return this.index;
+    }
+
     public void Highlighted(bool yes) {
         this.highlight.SetVisible(yes);
     }

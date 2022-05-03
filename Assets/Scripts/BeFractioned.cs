@@ -18,11 +18,14 @@ public class BeFractioned : MonoBehaviour
 
     int width = 10;
     int height = 10;
+
+    bool updating = false;
     Node[,] board;
 
     List<NodePiece> update;
     List<FlippedPieces> flipped;
     List<NodePiece> dead;
+    List<NodePiece> highlighted;
 
     System.Random random;
 
@@ -53,6 +56,7 @@ public class BeFractioned : MonoBehaviour
         this.update = new List<NodePiece>();
         this.flipped = new List<FlippedPieces>();
         this.dead = new List<NodePiece>();
+        this.highlighted = new List<NodePiece>();
 
         InitializeBoard();
         VerifyBoard();
@@ -75,7 +79,7 @@ public class BeFractioned : MonoBehaviour
     {
         piece.ResetPosition();
         piece.flipped = null;
-        update.Add(piece);
+        this.update.Add(piece);
     }
 
     public void FlipPieces(Point one, Point two, bool main)
@@ -97,6 +101,7 @@ public class BeFractioned : MonoBehaviour
             this.update.Add(pieceOne);
             this.update.Add(pieceTwo);
             pieceTwo.SetHighlight(nodeOne.GetOverlay());
+            pieceOne.SetHighlight(nodeTwo.GetOverlay());
         }
         else
             ResetPiece(pieceOne);
@@ -172,58 +177,66 @@ public class BeFractioned : MonoBehaviour
         return board[p.x, p.y];
     }
 
+    public void addHighlighted(NodePiece piece)
+    {
+        this.highlighted.Add(piece);
+    }
+
+    public bool isUpdating(){
+        return this.updating;
+    }
+
+    List<NodePiece> getHighlighted()
+    {
+        return this.highlighted;
+    }
+
     void Update()
     {
         List<NodePiece> finishedUpdating = new List<NodePiece>();
-        for (int i = 0; i < update.Count; i++)
+        for (int i = 0; i < this.update.Count; i++)
         {
-            if (!update[i].UpdatePiece()) finishedUpdating.Add(update[i]);
+            if (!this.update[i].UpdatePiece()) finishedUpdating.Add(this.update[i]);
         }
+
+        this.updating = true;
         for (int i = 0; i < finishedUpdating.Count; i++)
         {
-            FlippedPieces flip = getFlipped(finishedUpdating[i]);
-            NodePiece flippedPiece = null;
+            List<NodePiece> pieces = getHighlighted();
+            foreach (NodePiece piece in pieces)
+            {
+                Node node = getNodeAtPoint(piece.GetPoint());
+                piece.gameObject.SetActive(false);
+                dead.Add(piece);
+                node.SetPiece(null);
+            }
+            ApplyGravityToBoard();
+            this.highlighted.Clear();
 
             List<Point> connected = isConnected(finishedUpdating[i].index, true);
-            bool wasFlipped = (flip != null);
-
-            if (wasFlipped)
+            foreach (Point pnt in connected)
             {
-                flippedPiece = flip.getOtherPiece(finishedUpdating[i]);
-                AddPoints(ref connected, isConnected(flippedPiece.index, true));
-            }
-
-            if (connected.Count == 0)
-            {
-                if (wasFlipped)
-                    FlipPieces(finishedUpdating[i].index, flippedPiece.index, false);
-            }
-            else
-            {
-                foreach (Point pnt in connected)
+                Node node = getNodeAtPoint(pnt);
+                NodePiece nodePiece = node.getPiece();
+                if (nodePiece != null)
                 {
-                    Node node = getNodeAtPoint(pnt);
-                    NodePiece nodePiece = node.getPiece();
-                    if (nodePiece != null)
-                    {
-                        nodePiece.gameObject.SetActive(false);
-                        dead.Add(nodePiece);
-                    }
-                    node.SetPiece(null);
+                    nodePiece.gameObject.SetActive(false);
+                    dead.Add(nodePiece);
                 }
-                ApplyGravityToBoard();
+                node.SetPiece(null);
             }
+            ApplyGravityToBoard();
 
-            flipped.Remove(flip);
-            update.Remove(finishedUpdating[i]);
+            this.update.Remove(finishedUpdating[i]);
         }
+        this.updating = false;
     }
 
     void ApplyGravityToBoard()
     {
-        for(int x = 0; x < width; x++)
+        for (int x = 0; x < width; x++)
         {
-            for(int y = (height - 1); y >= 0; y--)
+            for (int y = (height - 1); y >= 0; y--)
             {
                 Point p = new Point(x, y);
                 Node node = getNodeAtPoint(p);
@@ -252,13 +265,14 @@ public class BeFractioned : MonoBehaviour
                         NodePiece piece;
 
 
-                        if(this.dead.Count > 0)
+                        if (this.dead.Count > 0)
                         {
                             NodePiece revived = dead[0];
                             revived.gameObject.SetActive(true);
                             piece = revived;
                             this.dead.RemoveAt(0);
-                        } else
+                        }
+                        else
                         {
                             GameObject obj = Instantiate(nodePiece, gameBoard);
                             NodePiece n = obj.GetComponent<NodePiece>();

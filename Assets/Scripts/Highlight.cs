@@ -26,17 +26,16 @@ public class Highlight : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        for (int i = 0; i < this.highlighted.Count; i++)
-        {
-            this.highlighted[i].Highlighted(true);
-        }
+        
     }
 
     public void MovePiece(NodePiece piece)
     {
+        if (this.highlighted.Contains(piece) || this.game.isUpdating()) return;
         this.highlighted.Add(piece);
-        Debug.Log(this.highlighted.Count);
         this.mouseStart = Input.mousePosition;
+        this.game.addHighlighted(piece);
+        piece.Highlighted(true);
     }
 
     public void DropPiece()
