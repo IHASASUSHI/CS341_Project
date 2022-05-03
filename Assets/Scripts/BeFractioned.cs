@@ -157,7 +157,7 @@ public class BeFractioned : MonoBehaviour
     int fillPiece()
     {
         int val = 1;
-        val = (random.Next(0, 100) / (100 / pieces.Length)) + 1;
+        val = (random.Next(0, 100) / (100 / (pieces.Length - 1))) + 1;
         return val;
     }
 
@@ -206,8 +206,11 @@ public class BeFractioned : MonoBehaviour
             foreach (NodePiece piece in pieces)
             {
                 Node node = getNodeAtPoint(piece.GetPoint());
-                piece.gameObject.SetActive(false);
-                dead.Add(piece);
+                if (piece != null)
+                {
+                    piece.gameObject.SetActive(false);
+                    dead.Add(piece);
+                }
                 node.SetPiece(null);
             }
             ApplyGravityToBoard();
@@ -279,8 +282,8 @@ public class BeFractioned : MonoBehaviour
                             RectTransform rect = obj.GetComponent<RectTransform>();
                             piece = n;
                         }
-
                         piece.Initialize(newVal, p, pieces[newVal - 1]);
+                        piece.SetHighlight(getNodeAtPoint(p).GetOverlay());
                         piece.rect.anchoredPosition = getPositionFromPoint(new Point(x, -1));
 
                         Node hole = getNodeAtPoint(p);
