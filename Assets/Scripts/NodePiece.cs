@@ -12,8 +12,6 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     [HideInInspector]
     public Vector2 pos;
     [HideInInspector]
-    public NodePiece flipped;
-    [HideInInspector]
     public RectTransform rect;
 
     bool updating;
@@ -21,7 +19,6 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     Overlay highlight;
 
     public void Initialize(int value, Point index, Sprite piece) {
-        this.flipped = null;
         this.img = GetComponent<Image>();
         this.rect = GetComponent<RectTransform>();
 
@@ -48,7 +45,6 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     public void MovePosition(Vector2 move) {
         this.rect.anchoredPosition += move * Time.deltaTime * 16f;
     }
-
 
     public void MovePositionTo(Vector2 move) {
         this.rect.anchoredPosition = Vector2.Lerp(this.rect.anchoredPosition, move, Time.deltaTime * 16f);
@@ -80,12 +76,10 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void OnPointerDown(PointerEventData eventData) {
         if(this.updating) return;
-        MovePieces.Instance.MovePiece(this);
-        Highlight.Instance.MovePiece(this);
+        Highlight.Instance.HighlightPiece(this);
     }
 
     public void OnPointerUp(PointerEventData eventData) {
-        MovePieces.Instance.DropPiece();
         Highlight.Instance.DropPiece();
     }
 
@@ -93,7 +87,7 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     {
         if (eventData.eligibleForClick == true)
         {
-            Highlight.Instance.MovePiece(this);
+            Highlight.Instance.HighlightPiece(this);
         }
     }
 }

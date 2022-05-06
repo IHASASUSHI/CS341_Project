@@ -23,7 +23,6 @@ public class BeFractioned : MonoBehaviour
     Node[,] board;
 
     List<NodePiece> update;
-    List<FlippedPieces> flipped;
     List<NodePiece> dead;
     List<NodePiece> highlighted;
 
@@ -35,26 +34,11 @@ public class BeFractioned : MonoBehaviour
         StartGame();
     }
 
-    FlippedPieces getFlipped(NodePiece p)
-    {
-        FlippedPieces flip = null;
-        for (int i = 0; i < flipped.Count; i++)
-        {
-            if (flipped[i].getOtherPiece(p) != null)
-            {
-                flip = flipped[i];
-                break;
-            }
-        }
-        return flip;
-    }
-
     void StartGame()
     {
         string seed = "0";
         random = new System.Random(seed.GetHashCode());
         this.update = new List<NodePiece>();
-        this.flipped = new List<FlippedPieces>();
         this.dead = new List<NodePiece>();
         this.highlighted = new List<NodePiece>();
 
@@ -78,33 +62,7 @@ public class BeFractioned : MonoBehaviour
     public void ResetPiece(NodePiece piece)
     {
         piece.ResetPosition();
-        piece.flipped = null;
         this.update.Add(piece);
-    }
-
-    public void FlipPieces(Point one, Point two, bool main)
-    {
-        if (getValueAtPoint(one) < 0) return;
-
-        Node nodeOne = getNodeAtPoint(one);
-        NodePiece pieceOne = nodeOne.getPiece();
-        if (getValueAtPoint(two) > 0)
-        {
-            Node nodeTwo = getNodeAtPoint(two);
-            NodePiece pieceTwo = nodeTwo.getPiece();
-            nodeOne.SetPiece(pieceTwo);
-            nodeTwo.SetPiece(pieceOne);
-
-            if (main) flipped.Add(new FlippedPieces(pieceOne, pieceTwo));
-
-
-            this.update.Add(pieceOne);
-            this.update.Add(pieceTwo);
-            pieceTwo.SetHighlight(nodeOne.GetOverlay());
-            pieceOne.SetHighlight(nodeTwo.GetOverlay());
-        }
-        else
-            ResetPiece(pieceOne);
     }
 
     void InstantiateBoard()
@@ -179,31 +137,36 @@ public class BeFractioned : MonoBehaviour
 
     public void addHighlighted(NodePiece piece)
     {
+        if (this.highlighted.Contains(piece)) return;
         this.highlighted.Add(piece);
+        piece.Highlighted(true);
     }
-
-    public bool isUpdating(){
-        return this.updating;
-    }
-
-    List<NodePiece> getHighlighted()
+    public void doneHighlighting()
     {
-        return this.highlighted;
+        if(this.highlighted.Count == 0) return;
+        for (int i = 0; i < this.highlighted.Count; i++)
+        {
+            this.highlighted[i].Highlighted(false);
+        }
+        this.update.AddRange(this.highlighted);
+    }
+
+    public bool isUpdating()
+    {
+        return this.updating;
     }
 
     void Update()
     {
         List<NodePiece> finishedUpdating = new List<NodePiece>();
+        if (this.update.Count != 0) this.updating = true;
         for (int i = 0; i < this.update.Count; i++)
         {
             if (!this.update[i].UpdatePiece()) finishedUpdating.Add(this.update[i]);
         }
-
-        this.updating = true;
         for (int i = 0; i < finishedUpdating.Count; i++)
         {
-            List<NodePiece> pieces = getHighlighted();
-            foreach (NodePiece piece in pieces)
+            foreach (NodePiece piece in this.highlighted)
             {
                 Node node = getNodeAtPoint(piece.GetPoint());
                 if (piece != null)
@@ -232,7 +195,7 @@ public class BeFractioned : MonoBehaviour
 
             this.update.Remove(finishedUpdating[i]);
         }
-        this.updating = false;
+        if (this.update.Count == 0) this.updating = false;
     }
 
     void ApplyGravityToBoard()
@@ -457,27 +420,5 @@ public class Node
     public Overlay GetOverlay()
     {
         return this.overlay;
-    }
-}
-
-[System.Serializable]
-public class FlippedPieces
-{
-    public NodePiece one;
-    public NodePiece two;
-
-    public FlippedPieces(NodePiece o, NodePiece t)
-    {
-        one = o; two = t;
-    }
-
-    public NodePiece getOtherPiece(NodePiece p)
-    {
-        if (p == one)
-            return two;
-        else if (p == two)
-            return one;
-        else
-            return null;
     }
 }

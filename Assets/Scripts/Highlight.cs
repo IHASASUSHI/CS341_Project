@@ -7,9 +7,7 @@ public class Highlight : MonoBehaviour
     public static Highlight Instance;
     BeFractioned game;
 
-    List<NodePiece> highlighted;
     Point newIndex;
-    Vector2 mouseStart;
 
     public void Awake()
     {
@@ -20,7 +18,6 @@ public class Highlight : MonoBehaviour
     void Start()
     {
         this.game = GetComponent<BeFractioned>();
-        this.highlighted = new List<NodePiece>();
     }
 
     // Update is called once per frame
@@ -29,22 +26,14 @@ public class Highlight : MonoBehaviour
         
     }
 
-    public void MovePiece(NodePiece piece)
+    public void HighlightPiece(NodePiece piece)
     {
-        if (this.highlighted.Contains(piece) || this.game.isUpdating()) return;
-        this.highlighted.Add(piece);
-        this.mouseStart = Input.mousePosition;
+        if (this.game.isUpdating()) return;
         this.game.addHighlighted(piece);
-        piece.Highlighted(true);
     }
 
     public void DropPiece()
     {
-        if(this.highlighted.Count == 0) return;
-        for (int i = 0; i < this.highlighted.Count; i++)
-        {
-            this.highlighted[i].Highlighted(false);
-        }
-        this.highlighted.Clear();
+        this.game.doneHighlighting();
     }
 }

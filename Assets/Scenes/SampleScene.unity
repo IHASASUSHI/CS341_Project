@@ -200,7 +200,6 @@ GameObject:
   m_Component:
   - component: {fileID: 326122755}
   - component: {fileID: 326122754}
-  - component: {fileID: 326122756}
   - component: {fileID: 326122757}
   m_Layer: 0
   m_Name: BeFractioned
@@ -262,18 +261,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &326122756
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 326122753}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d41f50b3dfd4ba24cb9230d9afae5c4f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &326122757
 MonoBehaviour:
   m_ObjectHideFlags: 0
