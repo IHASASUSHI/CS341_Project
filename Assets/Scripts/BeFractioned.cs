@@ -8,6 +8,7 @@ public class BeFractioned : MonoBehaviour
 
     [Header("UI Elements")]
     public Sprite[] pieces;
+    public Sprite[] powerUpPieces;
     public Sprite[] highlights;
     public RectTransform gameBoard;
     public RectTransform overlay;
@@ -18,8 +19,10 @@ public class BeFractioned : MonoBehaviour
 
     int width = 10;
     int height = 10;
-
+    int powerValue = 0;
     bool updating = false;
+    bool power = false;
+    Node powerNode = null;
     Node[,] board;
 
     List<NodePiece> update;
@@ -143,7 +146,7 @@ public class BeFractioned : MonoBehaviour
     }
     public void doneHighlighting()
     {
-        if(this.highlighted.Count == 0) return;
+        if (this.highlighted.Count == 0) return;
         for (int i = 0; i < this.highlighted.Count; i++)
         {
             this.highlighted[i].Highlighted(false);
@@ -166,6 +169,12 @@ public class BeFractioned : MonoBehaviour
         }
         for (int i = 0; i < finishedUpdating.Count; i++)
         {
+            if (this.highlighted.totalValue)
+            {
+                power = true;
+                powerNode = getNodeAtPoint(this.highlighted[0].GetPoint());
+                powerValue = this.highlighted.total;
+            }
             foreach (NodePiece piece in this.highlighted)
             {
                 Node node = getNodeAtPoint(piece.GetPoint());
@@ -175,6 +184,21 @@ public class BeFractioned : MonoBehaviour
                     dead.Add(piece);
                 }
                 node.SetPiece(null);
+            }
+            if (powerNode != null)
+            {
+                NodePiece revived = dead[0];
+                revived.gameObject.SetActive(true);
+                piece = revived;
+                this.dead.RemoveAt(0);
+                piece.Initialize(newVal, powerNode.getPoint, powerUpPieces[powerValue]);
+                piece.SetHighlight(powerNode.GetOverlay());
+                piece.rect.anchoredPosition = getPositionFromPoint(new Point(x, -1));
+
+                powerNode.SetPiece(piece);
+                ResetPiece(piece);
+                power = false;
+                powerNode = null;
             }
             ApplyGravityToBoard();
             this.highlighted.Clear();
@@ -415,6 +439,11 @@ public class Node
     public NodePiece getPiece()
     {
         return piece;
+    }
+
+    public NodePiece getPoint()
+    {
+        return index;
     }
 
     public Overlay GetOverlay()
