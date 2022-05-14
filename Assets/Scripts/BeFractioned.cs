@@ -16,8 +16,8 @@ public class BeFractioned : MonoBehaviour
     public GameObject nodePiece;
     public GameObject nodePieceOverlay;
 
-    int width = 10;
-    int height = 10;
+    int width = 8;
+    int height = 8;
 
     bool updating = false;
     Node[,] board;
