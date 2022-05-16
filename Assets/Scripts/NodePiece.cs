@@ -43,7 +43,7 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     }
 
     public void MovePosition(Vector2 move) {
-        this.rect.anchoredPosition += move * Time.deltaTime * 16f;
+        this.rect.anchoredPosition += move * Time.deltaTime * 8f;
     }
 
     public void MovePositionTo(Vector2 move) {

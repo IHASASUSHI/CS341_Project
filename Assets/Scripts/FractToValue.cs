@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,22 +7,22 @@ using UnityEngine;
 [System.Serializable]
 public class FractToValue
 {
-    public string Initialize(List<String> input)
+    public static int[] ToValue(List<string> input)
     {
         List<int> data = new  List<int>();
         int multiple = 1;
         foreach (string fract in input)
         {
-            String[] value = fract.Split('/');
-            data.Add(Int32.parse(value[0]));
-            multiple = lcm(multiple, Int32.parse(value[1]));
+            int[] value = Array.ConvertAll(fract.Split('/'), s => int.Parse(s));
+            data.Add(value[0]);
+            multiple = lcm(multiple, value[1]);
         }
 
-        for (int i = 0; i < data[0].Count; i++)
+        for (int i = 0; i < data.Count; i++)
         {
             data[i] = data[i] * multiple/data[1];
         }
-        return string.Format("%d/%d", data.Sum(), multiple);
+        return new int[] {data.Sum(), multiple};
     }
     static int gcf(int a, int b)
     {

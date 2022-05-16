@@ -28,6 +28,7 @@ public class BeFractioned : MonoBehaviour
     List<NodePiece> update;
     List<NodePiece> dead;
     List<NodePiece> highlighted;
+    List<string> highlightedValue;
 
     System.Random random;
 
@@ -44,6 +45,7 @@ public class BeFractioned : MonoBehaviour
         this.update = new List<NodePiece>();
         this.dead = new List<NodePiece>();
         this.highlighted = new List<NodePiece>();
+        this.highlightedValue = new List<string>();
 
         InitializeBoard();
         VerifyBoard();
@@ -142,6 +144,7 @@ public class BeFractioned : MonoBehaviour
     {
         if (this.highlighted.Contains(piece)) return;
         this.highlighted.Add(piece);
+        this.highlightedValue.Add(string.Format("1/%d", (piece.value + 1)));
         piece.Highlighted(true);
     }
     public void doneHighlighting()
@@ -169,7 +172,8 @@ public class BeFractioned : MonoBehaviour
         }
         for (int i = 0; i < finishedUpdating.Count; i++)
         {
-            if (this.highlighted.totalValue)
+            int[] frac = FractToValue.ToValue(this.highlightedValue);
+            if (frac[0] % frac[1] == 0)
             {
                 power = true;
                 powerNode = getNodeAtPoint(this.highlighted[0].GetPoint());
@@ -441,7 +445,7 @@ public class Node
         return piece;
     }
 
-    public NodePiece getPoint()
+    public Point getPoint()
     {
         return index;
     }
