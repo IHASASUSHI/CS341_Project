@@ -22,6 +22,7 @@ public class BeFractioned : MonoBehaviour
     int powerValue = 0;
     bool updating = false;
     bool power = false;
+    bool powerHighlighted = false;
     Node powerNode = null;
     Node[,] board;
 
@@ -148,6 +149,10 @@ public class BeFractioned : MonoBehaviour
         {
             this.highlightedValue.Add(string.Format("1/{0}", piece.value));
         }
+        else
+        {
+            this.powerHighlighted = true;
+        }
         piece.Highlighted(true);
     }
 
@@ -159,6 +164,7 @@ public class BeFractioned : MonoBehaviour
             this.highlighted[i].Highlighted(false);
         }
         this.update.AddRange(this.highlighted);
+        this.powerHighlighted = false;
     }
 
     public bool isUpdating()
@@ -176,7 +182,7 @@ public class BeFractioned : MonoBehaviour
         }
         for (int i = 0; i < finishedUpdating.Count; i++)
         {
-            if (this.highlighted.Count > 2)
+            if (this.highlighted.Count > 2 || this.powerHighlighted)
             {
                 int[] frac = FractToValue.ToValue(this.highlightedValue);
                 if (frac[0] % frac[1] == 0)
