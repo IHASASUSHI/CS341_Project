@@ -13,7 +13,7 @@ public class FractToValue
         int multiple = 1;
         foreach (string fract in input)
         {
-            int[] value = Array.ConvertAll(fract.Split('/'), s => int.Parse(s));
+            int[] value = Array.ConvertAll(fract.Split('/'), s => Int32.Parse(s));
             data.Add(value[0]);
             multiple = lcm(multiple, value[1]);
         }

@@ -91,7 +91,7 @@ public class BeFractioned : MonoBehaviour
                 NodePiece piece = p.GetComponent<NodePiece>();
                 rect = p.GetComponent<RectTransform>();
                 rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
-                piece.Initialize(val, new Point(x, y), pieces[val - 1]);
+                piece.Initialize(val, new Point(x, y), pieces[val - 1], true);
                 piece.SetHighlight(over);
                 node.SetPiece(piece);
                 node.SetOverlay(over);
@@ -142,11 +142,15 @@ public class BeFractioned : MonoBehaviour
 
     public void addHighlighted(NodePiece piece)
     {
-        if (this.highlighted.Contains(piece)) return;
+        if (this.highlighted.Contains(piece) || this.highlighted.Count == 8) return;
         this.highlighted.Add(piece);
-        this.highlightedValue.Add(string.Format("1/%d", (piece.value + 1)));
+        if (!piece.power)
+        {
+            this.highlightedValue.Add(string.Format("1/{0}", piece.value));
+        }
         piece.Highlighted(true);
     }
+
     public void doneHighlighting()
     {
         if (this.highlighted.Count == 0) return;
@@ -172,39 +176,42 @@ public class BeFractioned : MonoBehaviour
         }
         for (int i = 0; i < finishedUpdating.Count; i++)
         {
-            int[] frac = FractToValue.ToValue(this.highlightedValue);
-            if (frac[0] % frac[1] == 0)
+            if (this.highlighted.Count > 2)
             {
-                power = true;
-                powerNode = getNodeAtPoint(this.highlighted[0].GetPoint());
-                powerValue = this.highlighted.total;
-            }
-            foreach (NodePiece piece in this.highlighted)
-            {
-                Node node = getNodeAtPoint(piece.GetPoint());
-                if (piece != null)
+                int[] frac = FractToValue.ToValue(this.highlightedValue);
+                if (frac[0] % frac[1] == 0)
                 {
-                    piece.gameObject.SetActive(false);
-                    dead.Add(piece);
+                    Debug.Log(powerValue);
+                    power = true;
+                    powerNode = getNodeAtPoint(this.highlighted[0].GetPoint());
+                    powerValue = frac[0] / frac[1];
                 }
-                node.SetPiece(null);
-            }
-            if (powerNode != null)
-            {
-                NodePiece revived = dead[0];
-                revived.gameObject.SetActive(true);
-                piece = revived;
-                this.dead.RemoveAt(0);
-                piece.Initialize(newVal, powerNode.getPoint, powerUpPieces[powerValue]);
-                piece.SetHighlight(powerNode.GetOverlay());
-                piece.rect.anchoredPosition = getPositionFromPoint(new Point(x, -1));
+                foreach (NodePiece piece in this.highlighted)
+                {
+                    Node node = getNodeAtPoint(piece.GetPoint());
+                    if (piece != null)
+                    {
+                        piece.gameObject.SetActive(false);
+                        dead.Add(piece);
+                    }
+                    node.SetPiece(null);
+                }
+                if (powerNode != null)
+                {
+                    NodePiece revived = dead[0];
+                    revived.gameObject.SetActive(true);
+                    this.dead.RemoveAt(0);
+                    revived.Initialize(powerValue, powerNode.getPoint(), powerUpPieces[powerValue - 2], true);
+                    revived.SetHighlight(powerNode.GetOverlay());
+                    revived.rect.anchoredPosition = getPositionFromPoint(new Point(powerNode.getPoint().x, powerNode.getPoint().y));
 
-                powerNode.SetPiece(piece);
-                ResetPiece(piece);
-                power = false;
-                powerNode = null;
+                    powerNode.SetPiece(revived);
+                    ResetPiece(revived);
+                    power = false;
+                    powerNode = null;
+                }
+                ApplyGravityToBoard();
             }
-            ApplyGravityToBoard();
             this.highlighted.Clear();
 
             List<Point> connected = isConnected(finishedUpdating[i].index, true);
@@ -273,7 +280,7 @@ public class BeFractioned : MonoBehaviour
                             RectTransform rect = obj.GetComponent<RectTransform>();
                             piece = n;
                         }
-                        piece.Initialize(newVal, p, pieces[newVal - 1]);
+                        piece.Initialize(newVal, p, pieces[newVal - 1], true);
                         piece.SetHighlight(getNodeAtPoint(p).GetOverlay());
                         piece.rect.anchoredPosition = getPositionFromPoint(new Point(x, -1));
 
