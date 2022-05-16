@@ -172,6 +172,18 @@ public class BeFractioned : MonoBehaviour
         return this.updating;
     }
 
+    public void applyPowerUp(int value, Point point)
+    {
+        if (value == 0) // x
+        {
+            for (int x = 0; x < width; i++){
+                Node node = getNodeAtPoint(point.y)
+            }
+        }
+        if (value == 1) // y
+        if (value == 2) // nuke
+    }
+
     void Update()
     {
         List<NodePiece> finishedUpdating = new List<NodePiece>();
@@ -197,8 +209,9 @@ public class BeFractioned : MonoBehaviour
                     Node node = getNodeAtPoint(piece.GetPoint());
                     if (piece != null)
                     {
+                        if (piece.power) applyPowerUp(piece.value, piece.index);
                         piece.gameObject.SetActive(false);
-                        dead.Add(piece);
+                        if (!dead.Contains(piece)) dead.Add(piece);
                     }
                     node.SetPiece(null);
                 }
