@@ -49,6 +49,8 @@ public class BeFractioned : MonoBehaviour
         this.dead = new List<NodePiece>();
         this.highlighted = new List<NodePiece>();
         this.highlightedValue = new List<string>();
+        this.rollers = new List<NodePiece>();
+        this.cutters = new List<NodePiece>();
 
         InitializeBoard();
         VerifyBoard();
@@ -77,6 +79,12 @@ public class BeFractioned : MonoBehaviour
     {
         for (int x = 0; x < width; x++)
         {
+
+            GameObject p = Instantiate(nodePiece, gameBoard);
+            NodePiece piece = p.GetComponent<NodePiece>();
+            RectTransform rect = p.GetComponent<RectTransform>();
+            rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
+            piece.Initialize(val, new Point(x, y), pieces[val - 1], "roller");
             for (int y = 0; y < height; y++)
             {
                 Node node = getNodeAtPoint(new Point(x, y));
@@ -84,14 +92,14 @@ public class BeFractioned : MonoBehaviour
                 int val = node.value;
                 if (val <= 0) continue;
                 //highlight
-                GameObject p = Instantiate(nodePieceOverlay, overlay);
+                p = Instantiate(nodePieceOverlay, overlay);
                 Overlay over = p.GetComponent<Overlay>();
-                RectTransform rect = p.GetComponent<RectTransform>();
+                rect = p.GetComponent<RectTransform>();
                 rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
                 over.Initialize(new Point(x, y), highlights[0]);
                 //object
                 p = Instantiate(nodePiece, gameBoard);
-                NodePiece piece = p.GetComponent<NodePiece>();
+                piece = p.GetComponent<NodePiece>();
                 rect = p.GetComponent<RectTransform>();
                 rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
                 piece.Initialize(val, new Point(x, y), pieces[val - 1], "tile");
@@ -225,7 +233,8 @@ public class BeFractioned : MonoBehaviour
                     Node node = getNodeAtPoint(piece.GetPoint());
                     if (piece != null)
                     {
-                        if (piece.type.Equals("power")) {
+                        if (piece.type.Equals("power"))
+                        {
                             applyPowerUp(piece.value, piece.index); // hacky af but I'm despirate
                             return;
                         }
