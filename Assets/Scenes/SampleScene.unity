@@ -234,7 +234,6 @@ MonoBehaviour:
     - row: 00000000000000000000
     - row: 00000000000000000000
   pieces:
-  - {fileID: 21300000, guid: c74f1047a40070245972e00976acfb83, type: 3}
   - {fileID: 21300000, guid: a30e644be46510d4b8cd4132f876fcea, type: 3}
   - {fileID: 21300000, guid: 6b7f7a47629e0e64fa4a3b602c95ee4e, type: 3}
   - {fileID: 21300000, guid: 344eaa8f3b0d23c4eb03280fb331ef70, type: 3}
@@ -326,7 +325,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c384c0dbf62bede499a6767e5b97ff30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxTime: 5
+  maxTime: 30
   gameoverText: {fileID: 1818940890}
 --- !u!114 &358478496
 MonoBehaviour:
