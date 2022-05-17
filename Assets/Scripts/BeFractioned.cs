@@ -56,7 +56,7 @@ public class BeFractioned : MonoBehaviour
         this.cutters = new List<NodePiece>();
 
         InitializeBoard();
-        //VerifyBoard();
+        VerifyBoard();
         InstantiateBoard();
     }
 
@@ -208,7 +208,6 @@ public class BeFractioned : MonoBehaviour
     void Update()
     {
         List<NodePiece> finishedUpdating = new List<NodePiece>();
-
         if (this.update.Count != 0) this.updating = true;
         for (int i = 0; i < this.update.Count; i++)
         {
@@ -352,31 +351,108 @@ public class BeFractioned : MonoBehaviour
         }
     }
 
-    bool addsToWhole(List<NodePiece> nodePieces)
+    void VerifyBoard()
     {
-        Dictionary<int, double> pizzaTypes = new Dictionary<int, double>();
-        pizzaTypes.Add(1, 0.5);
-        pizzaTypes.Add(2, 0.3333);
-        pizzaTypes.Add(3, 0.25);
-        pizzaTypes.Add(4, 0.1666);
-        pizzaTypes.Add(5, 0.6666);
-        pizzaTypes.Add(6, 0.75);
-        pizzaTypes.Add(7, 0.8333);
+        List<int> remove;
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                Point p = new Point(x, y);
+                int val = getValueAtPoint(p);
+                if (val <= 0) continue;
 
-        double sum = 0;
-        List<Point> whole = new List<Point>();
-        foreach (NodePiece nodePiece in nodePieces)
-        {
-            sum += pizzaTypes[nodePiece.value];
+                remove = new List<int>();
+                while (isConnected(p, true).Count > 0)
+                {
+                    val = getValueAtPoint(p);
+                    if (!remove.Contains(val))
+                        remove.Add(val);
+                    setValueAtPoint(p, newValue(ref remove));
+                }
+            }
         }
-        if (sum % 1 <= 0.05 || sum % 1 >= 0.95)
+    }
+
+    List<Point> isConnected(Point p, bool main)
+    {
+        List<Point> connected = new List<Point>();
+        int val = getValueAtPoint(p);
+        Point[] directions =
         {
-            Debug.Log(sum%1);
-            Debug.Log("Valid");
-            return true;
+            Point.up,
+            Point.right,
+            Point.down,
+            Point.left
+        };
+
+        foreach (Point dir in directions)
+        {
+            List<Point> line = new List<Point>();
+
+            int same = 0;
+            for (int i = 1; i < 3; i++)
+            {
+                Point check = Point.add(p, Point.mult(dir, i));
+                if (getValueAtPoint(check) == val)
+                {
+                    line.Add(check);
+                    same++;
+                }
+            }
+
+            if (same > 1)
+                AddPoints(ref connected, line);
         }
-        Debug.Log("Invalid");
-        return false;
+
+        for (int i = 0; i < 2; i++)
+        {
+            List<Point> line = new List<Point>();
+
+            int same = 0;
+            Point[] check = { Point.add(p, directions[i]), Point.add(p, directions[i + 2]) };
+            foreach (Point next in check)
+            {
+                if (getValueAtPoint(next) == val)
+                {
+                    line.Add(next);
+                    same++;
+                }
+            }
+
+            if (same > 1)
+                AddPoints(ref connected, line);
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            List<Point> square = new List<Point>();
+
+            int same = 0;
+            int next = i + 1;
+            if (next >= 4)
+                next -= 4;
+
+            Point[] check = { Point.add(p, directions[i]), Point.add(p, directions[next]), Point.add(p, Point.add(directions[i], directions[next])) };
+            foreach (Point pnt in check)
+            {
+                if (getValueAtPoint(pnt) == val)
+                {
+                    square.Add(pnt);
+                    same++;
+                }
+            }
+
+            if (same > 2)
+                AddPoints(ref connected, square);
+        }
+
+        if (main)
+        {
+            for (int i = 0; i < connected.Count; i++)
+                AddPoints(ref connected, isConnected(connected[i], false));
+        }
+        return connected;
     }
 
     int newValue(ref List<int> remove)
