@@ -57,6 +57,9 @@ public class BeFractioned : MonoBehaviour
         this.highlightedValue = new List<string>();
         this.rollers = new List<NodePiece>();
         this.cutters = new List<NodePiece>();
+        this.fractionPreview.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 200);
+        this.fractionPreview.rectTransform.anchoredPosition = new Vector2(this.fractionPreview.rectTransform.anchoredPosition.x, this.fractionPreview.rectTransform.anchoredPosition.y - 10);
+        this.fractionPreview.bounds.SetMinMax(new Vector2(0,0), new Vector2(200, 200));
 
         InitializeBoard();
         VerifyBoard();
@@ -206,12 +209,25 @@ public class BeFractioned : MonoBehaviour
         else this.powerHighlighted = true;
         piece.Highlighted(true);
 
-        string previewString = "";
-        foreach (string fraction in this.highlightedValue)
+        if (this.highlightedValue.Count > 0)
         {
-            previewString += fraction + " + ";
+            int[] total = FractToValue.ToValue(this.highlightedValue);
+            string previewString = this.highlightedValue[0];
+            for (int i = 1; i < this.highlightedValue.Count; i++)
+            {
+                previewString += " + " + this.highlightedValue[i];
+            }
+            string fraction = "";
+            string whole = "";
+            if (total[0] >= total[1]) whole = (total[0] / total[1]).ToString();
+            if (total[0] % total[1] != 0)
+            {
+                int multiple = FractToValue.gcf(total[0], total[1]);
+                fraction = (total[0] % total[1] / multiple) + "/" + total[1] / multiple;
+            }
+            previewString += string.Format(" = {0} {1}", whole, fraction);
+            fractionPreview.text = previewString;
         }
-        fractionPreview.text = previewString;
     }
 
     public void doneHighlighting()

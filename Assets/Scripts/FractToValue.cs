@@ -9,8 +9,8 @@ public class FractToValue
 {
     public static int[] ToValue(List<string> input)
     {
-        List<int> numerator  = new List<int>();
-        List<int> denominator  = new List<int>();
+        List<int> numerator = new List<int>();
+        List<int> denominator = new List<int>();
         int multiple = 1;
         foreach (string fract in input)
         {
@@ -24,9 +24,10 @@ public class FractToValue
         {
             numerator[i] = numerator[i] * (multiple / denominator[i]);
         }
-        return new int[] {numerator.Sum(), multiple};
+        return new int[] { numerator.Sum(), multiple };
     }
-    static int gcf(int a, int b)
+
+    public static int gcf(int a, int b)
     {
         while (b != 0)
         {
@@ -37,7 +38,7 @@ public class FractToValue
         return a;
     }
 
-    static int lcm(int a, int b)
+    public static int lcm(int a, int b)
     {
         return (a / gcf(a, b)) * b;
     }
