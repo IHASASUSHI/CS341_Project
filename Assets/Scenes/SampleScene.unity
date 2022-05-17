@@ -242,8 +242,15 @@ MonoBehaviour:
   - {fileID: 21300000, guid: aeac04f05825d304ab1080991350eebc, type: 3}
   - {fileID: 21300000, guid: 00e6c50cc99974e4094e984197a25446, type: 3}
   - {fileID: 21300000, guid: 9036fa2b43a2f674180d8b4db055c03d, type: 3}
+  powerUpPieces:
+  - {fileID: 21300000, guid: c761e21646d2a404da29a006f3375002, type: 3}
+  - {fileID: 21300000, guid: 6ef2afbd81fdecf41a805df0b41d8aee, type: 3}
+  - {fileID: 21300000, guid: b299087dd8d08704fad3eaf080216a59, type: 3}
   highlights:
   - {fileID: 21300000, guid: ab21870b7c4d86b479ba415697a13128, type: 3}
+  roller: {fileID: 0}
+  cutter: {fileID: 0}
+  fire: {fileID: 0}
   gameBoard: {fileID: 1902705638}
   overlay: {fileID: 1091378098}
   nodePiece: {fileID: 4472926955625980874, guid: bba61814967e5524ab67e4f484de3703, type: 3}

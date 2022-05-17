@@ -10,6 +10,9 @@ public class BeFractioned : MonoBehaviour
     public Sprite[] pieces;
     public Sprite[] powerUpPieces;
     public Sprite[] highlights;
+    public Sprite roller;
+    public Sprite cutter;
+    public Sprite fire;
     public RectTransform gameBoard;
     public RectTransform overlay;
 
@@ -79,14 +82,23 @@ public class BeFractioned : MonoBehaviour
     {
         for (int x = 0; x < width; x++)
         {
-
             GameObject p = Instantiate(nodePiece, gameBoard);
             NodePiece piece = p.GetComponent<NodePiece>();
             RectTransform rect = p.GetComponent<RectTransform>();
-            rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
-            piece.Initialize(val, new Point(x, y), pieces[val - 1], "roller");
+            rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * -1));
+            piece.Initialize(0, new Point(x, -1), roller, "roller");
+            rollers.Add(piece);
             for (int y = 0; y < height; y++)
             {
+                if (x == 0)
+                {
+                    p = Instantiate(nodePiece, gameBoard);
+                    piece = p.GetComponent<NodePiece>();
+                    rect = p.GetComponent<RectTransform>();
+                    rect.anchoredPosition = new Vector2(32 + (64 * -1), -32 - (64 * y));
+                    piece.Initialize(0, new Point(-1, y), cutter, "roller");
+                    cutters.Add(piece);
+                }
                 Node node = getNodeAtPoint(new Point(x, y));
 
                 int val = node.value;
