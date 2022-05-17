@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class BeFractioned : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class BeFractioned : MonoBehaviour
     [Header("Prefabs")]
     public GameObject nodePiece;
     public GameObject nodePieceOverlay;
+
+    public TMP_Text fractionPreview;
 
     int width = 10;
     int height = 10;
@@ -172,6 +175,13 @@ public class BeFractioned : MonoBehaviour
         if (!piece.type.Equals("power")) this.highlightedValue.Add(string.Format("1/{0}", piece.value));
         else this.powerHighlighted = true;
         piece.Highlighted(true);
+
+        string previewString = "";
+        foreach (string fraction in this.highlightedValue)
+        {
+            previewString += fraction + " + ";
+        }
+        fractionPreview.text = previewString;
     }
 
     public void doneHighlighting()
@@ -180,6 +190,7 @@ public class BeFractioned : MonoBehaviour
         for (int i = 0; i < this.highlighted.Count; i++)
         {
             this.highlighted[i].Highlighted(false);
+            fractionPreview.text = "";
         }
         this.update.AddRange(this.highlighted);
     }
