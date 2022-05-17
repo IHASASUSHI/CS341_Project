@@ -16,6 +16,8 @@ public class BeFractioned : MonoBehaviour
     public GameObject nodePiece;
     public GameObject nodePieceOverlay;
 
+    public GameObject timerBar;
+
     int width = 10;
     int height = 10;
 
@@ -34,7 +36,7 @@ public class BeFractioned : MonoBehaviour
         StartGame();
     }
 
-    void StartGame()
+    public void StartGame()
     {
         string seed = "0";
         random = new System.Random(seed.GetHashCode());
@@ -55,6 +57,25 @@ public class BeFractioned : MonoBehaviour
             for (int x = 0; x < this.width; x++)
             {
                 board[x, y] = new Node((boardLayout.rows[y].row[x]) ? -1 : fillPiece(), new Point(x, y));
+            }
+        }
+    }
+
+    public void WipeBoard()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                Node node = getNodeAtPoint(new Point(x, y));
+
+                NodePiece nodePiece = node.getPiece();
+                if (nodePiece != null)
+                {
+                    nodePiece.gameObject.SetActive(false);
+                    dead.Add(nodePiece);
+                }
+                node.SetPiece(null);
             }
         }
     }
@@ -176,6 +197,8 @@ public class BeFractioned : MonoBehaviour
                         pizza.gameObject.SetActive(false);
                         dead.Add(pizza);
                         FindObjectOfType<AudioManager>().PlaySound("Combine Pizzas");
+                        timerBar.GetComponent<Timer>().IncreaseScore(50);
+                        timerBar.GetComponent<Timer>().IncreaseTime(2f);
                     }
                     Node node = getNodeAtPoint(pizza.GetPoint());
                     node.SetPiece(null);
