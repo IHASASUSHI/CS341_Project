@@ -45,7 +45,7 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void ResetPosition()
     {
-        pos = new Vector2(32 + (64 * index.x), -32 - (64 * index.y));
+        this.pos = new Vector2(32 + (64 * index.x), -32 - (64 * index.y));
     }
 
     public void MovePositionTo(Vector2 move, float speed)

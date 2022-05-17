@@ -9,20 +9,22 @@ public class FractToValue
 {
     public static int[] ToValue(List<string> input)
     {
-        List<int> data = new  List<int>();
+        List<int> numerator  = new List<int>();
+        List<int> denominator  = new List<int>();
         int multiple = 1;
         foreach (string fract in input)
         {
             int[] value = Array.ConvertAll(fract.Split('/'), s => Int32.Parse(s));
-            data.Add(value[0]);
+            numerator.Add(value[0]);
+            denominator.Add(value[1]);
             multiple = lcm(multiple, value[1]);
         }
 
-        for (int i = 0; i < data.Count; i++)
+        for (int i = 0; i < numerator.Count; i++)
         {
-            data[i] = data[i] * multiple / multiple;
+            numerator[i] = numerator[i] * (multiple / denominator[i]);
         }
-        return new int[] {data.Sum(), multiple};
+        return new int[] {numerator.Sum(), multiple};
     }
     static int gcf(int a, int b)
     {

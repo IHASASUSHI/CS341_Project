@@ -147,8 +147,7 @@ public class BeFractioned : MonoBehaviour
 
     int fillPiece()
     {
-        int val = 1;
-        val = (random.Next(0, 100) / (100 / (pieces.Length - 1))) + 1;
+        int val = random.Next(0, pieces.Length) + 1;
         return val;
     }
 
@@ -174,11 +173,35 @@ public class BeFractioned : MonoBehaviour
         this.highlighted.Add(piece);
         if (!piece.type.Equals("power"))
         {
+            string value = "";
             switch (piece.value)
             {
-
+                case 1:
+                    value = "1/1";
+                    break;
+                case 2:
+                    value = "1/2";
+                    break;
+                case 3:
+                    value = "1/3";
+                    break;
+                case 4:
+                    value = "1/4";
+                    break;
+                case 5:
+                    value = "1/6";
+                    break;
+                case 6:
+                    value = "2/3";
+                    break;
+                case 7:
+                    value = "3/4";
+                    break;
+                case 8:
+                    value = "5/6";
+                    break;
             }
-            this.highlightedValue.Add(string.Format("1/{0}", piece.value));
+            this.highlightedValue.Add(value);
         }
         else this.powerHighlighted = true;
         piece.Highlighted(true);
@@ -207,15 +230,53 @@ public class BeFractioned : MonoBehaviour
         return this.updating;
     }
 
-    public void applyPowerUp(int value, Point point)
+    public Point getPointAtPosition(RectTransform pos)
     {
-        if (value == 1) // y
+        int x = width * (int)pos.anchoredPosition.x / (int)gameBoard.sizeDelta.x;
+        int y = height * (int)pos.anchoredPosition.y / (-(int)gameBoard.sizeDelta.y);
+        Debug.Log(string.Format("{0} {1}", x, y));
+        return new Point(x, y);
+    }
+
+    public bool checkPower(NodePiece piece)
+    {
+        if (piece.type.Equals("power"))
+        {
+            if (piece.value != 3) applyPowerUp(piece.value, piece.index, 0);
+            else if (this.highlighted.Count > 1)
+            {
+                int value = 0;
+                foreach (NodePiece np in this.highlighted)
+                {
+                    if (!np.type.Equals("power"))
+                    {
+                        value = np.value;
+                        break;
+                    }
+                }
+                applyPowerUp(piece.value, piece.index, value);
+            }
+            Node node = getNodeAtPoint(piece.GetPoint());
+            if (piece != null)
+            {
+                piece.gameObject.SetActive(false);
+                if (!dead.Contains(piece)) dead.Add(piece);
+            }
+            node.SetPiece(null);
+            return true;
+        }
+        return false;
+    }
+
+    public void applyPowerUp(int value, Point point, int pieceValue)
+    {
+        if (value == 1) // x
         {
             this.cutters[point.x].SetVisible(true);
             this.cutters[point.x].pos = new Vector2(32 + (64 * point.x), -32 - (64 * height));
             this.update.Add(this.cutters[point.x]);
         }
-        if (value == 2) // x
+        if (value == 2) // y
         {
             this.rollers[point.y].SetVisible(true);
             this.rollers[point.y].pos = new Vector2(32 + (64 * width), -32 - (64 * point.y));
@@ -223,7 +284,16 @@ public class BeFractioned : MonoBehaviour
         }
         if (value == 3) // nuke
         {
-
+            foreach (Node node in board)
+            {
+                NodePiece piece = node.getPiece();
+                if (piece.value == pieceValue && piece.type.Equals("tile"))
+                {
+                    node.getPiece().gameObject.SetActive(false);
+                    dead.Add(node.getPiece());
+                    node.SetPiece(null);
+                }
+            }
         }
     }
 
@@ -235,6 +305,7 @@ public class BeFractioned : MonoBehaviour
         {
             if (!this.update[i].UpdatePiece())
             {
+                ApplyGravityToBoard();
                 if (this.update[i].type.Equals("cutter") || this.update[i].type.Equals("roller"))
                 {
                     this.update[i].SetVisible(false);
@@ -242,18 +313,75 @@ public class BeFractioned : MonoBehaviour
                 }
                 finishedUpdating.Add(this.update[i]);
             }
-            else if (this.update[i].type.Equals("cutter") || this.update[i].type.Equals("roller"))
+            else if (this.update[i].type.Equals("roller") && this.update[i].rect.anchoredPosition.x >= 0 && this.update[i].rect.anchoredPosition.x <= gameBoard.sizeDelta.x)
             {
-                NodePiece piece = getNodeAtPoint(this.update[i].pos).getPiece();
-                finishedUpdating.Add(piece);
-                this.highlighted.Add(piece);
+                Node node = getNodeAtPoint(getPointAtPosition(this.update[i].rect));
+                NodePiece piece = node.getPiece();
+                if (piece != null)
+                {
+                    if (piece.type.Equals("tile"))
+                    {
+                        piece.gameObject.SetActive(false);
+                        if (!dead.Contains(piece)) dead.Add(piece);
+                    }
+                    else if (piece.type.Equals("power"))
+                    {
+                        if (piece.value == 1) applyPowerUp(piece.value, piece.index, 0);
+                        else
+                        {
+                            int value = 0;
+                            foreach (NodePiece np in this.highlighted)
+                            {
+                                if (!np.type.Equals("power"))
+                                {
+                                    value = np.value;
+                                    break;
+                                }
+                            }
+                            applyPowerUp(piece.value, piece.index, fillPiece());
+                        }
+                    }
+                }
+                node.SetPiece(null);
+            }
+            else if (this.update[i].type.Equals("cutter") && this.update[i].rect.anchoredPosition.y <= 0 && this.update[i].rect.anchoredPosition.y >= -gameBoard.sizeDelta.y)
+            {
+                Node node = getNodeAtPoint(getPointAtPosition(this.update[i].rect));
+                NodePiece piece = node.getPiece();
+                if (piece != null)
+                {
+                    if (piece.type.Equals("tile"))
+                    {
+                        piece.gameObject.SetActive(false);
+                        if (!dead.Contains(piece)) dead.Add(piece);
+                    }
+                    else if (piece.type.Equals("power"))
+                    {
+                        if (piece.value == 2) applyPowerUp(piece.value, piece.index, 0);
+                        else
+                        {
+                            int value = 0;
+                            foreach (NodePiece np in this.highlighted)
+                            {
+                                if (!np.type.Equals("power"))
+                                {
+                                    value = np.value;
+                                    break;
+                                }
+                            }
+                            applyPowerUp(piece.value, piece.index, fillPiece());
+                        }
+                    }
+                }
+                node.SetPiece(null);
             }
         }
         for (int i = 0; i < finishedUpdating.Count; i++)
         {
-            if ((this.highlighted.Count > 1 || this.powerHighlighted))
+            if (this.highlighted.Count > 1 || this.powerHighlighted)
             {
                 int[] frac = FractToValue.ToValue(this.highlightedValue);
+                Debug.Log(string.Format("{0} {1}", frac[0], frac[1]));
                 if (frac[0] % frac[1] == 0 && frac[0] != 0)
                 {
                     power = true;
@@ -261,20 +389,28 @@ public class BeFractioned : MonoBehaviour
                     powerValue = frac[0] / frac[1];
                     foreach (NodePiece piece in this.highlighted)
                     {
-                        Node node = getNodeAtPoint(piece.GetPoint());
-                        if (piece != null)
+                        if (!checkPower(piece))
                         {
-                            piece.gameObject.SetActive(false);
-                            if (!dead.Contains(piece)) dead.Add(piece);
+                            Node node = getNodeAtPoint(piece.GetPoint());
+                            if (piece != null)
+                            {
+                                piece.gameObject.SetActive(false);
+                                if (!dead.Contains(piece)) dead.Add(piece);
+                            }
+                            node.SetPiece(null);
                         }
-                        node.SetPiece(null);
                     }
-                    if (powerValue - 2 >= 0)
+                    if (powerValue >= 2)
                     {
                         NodePiece revived = dead[0];
                         revived.gameObject.SetActive(true);
                         this.dead.RemoveAt(0);
-                        revived.Initialize(powerValue - 1, powerNode.getPoint(), powerUpPieces[powerValue - 2], "power");
+                        if (powerValue == 2)
+                        {
+                            int value = random.Next(0, 2);
+                            revived.Initialize(value + 1, powerNode.getPoint(), powerUpPieces[value], "power");
+                        }
+                        else revived.Initialize(3, powerNode.getPoint(), powerUpPieces[2], "power");
                         revived.SetHighlight(powerNode.GetOverlay());
                         revived.rect.anchoredPosition = getPositionFromPoint(new Point(powerNode.getPoint().x, powerNode.getPoint().y));
 
@@ -289,11 +425,7 @@ public class BeFractioned : MonoBehaviour
                 {
                     foreach (NodePiece piece in this.highlighted)
                     {
-                        if (piece.type.Equals("power"))
-                        {
-                            Debug.Log(this.update.Count);
-                            applyPowerUp(piece.value, piece.index);
-                        }
+                        checkPower(piece);
                     }
                 }
             }
