@@ -28,6 +28,7 @@ public class Timer : MonoBehaviour
         }
         else
         {
+<<<<<<< Updated upstream
             gameoverText.SetActive(true);
             Time.timeScale = 0;
         }
