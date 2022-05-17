@@ -29,6 +29,7 @@ public class Timer : MonoBehaviour
         else
         {
             gameoverText.SetActive(true);
+            FindObjectOfType<AudioManager>().PlaySound("Game Over");
             Time.timeScale = 0;
         }
     }
