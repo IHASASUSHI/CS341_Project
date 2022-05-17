@@ -198,7 +198,7 @@ public class BeFractioned : MonoBehaviour
                         dead.Add(pizza);
                         FindObjectOfType<AudioManager>().PlaySound("Combine Pizzas");
                         timerBar.GetComponent<Timer>().IncreaseScore(50);
-                        timerBar.GetComponent<Timer>().IncreaseTime(2f);
+                        timerBar.GetComponent<Timer>().IncreaseTime(1.5f);
                     }
                     Node node = getNodeAtPoint(pizza.GetPoint());
                     node.SetPiece(null);
