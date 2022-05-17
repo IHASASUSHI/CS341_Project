@@ -30,17 +30,6 @@ public class Overlay : MonoBehaviour
         this.index = p;
         UpdateName();
     }
-    public bool UpdatePiece() {
-        if(Vector2.Distance(this.rect.anchoredPosition, pos) > 1) {
-            this.updating = true;
-            return true;
-        }
-        else {
-            rect.anchoredPosition = pos;
-            updating = false;
-            return false;
-        }
-    }
 
     public void SetVisible(bool on){
         this.img.enabled = on;

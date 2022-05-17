@@ -8,7 +8,7 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 {
     public int value;
     public Point index;
-    public bool power;
+    public string type;
 
     [HideInInspector]
     public Vector2 pos;
@@ -19,10 +19,10 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     Image img;
     Overlay highlight;
 
-    public void Initialize(int value, Point index, Sprite piece, bool power) {
+    public void Initialize(int value, Point index, Sprite piece, string type) {
         this.img = GetComponent<Image>();
         this.rect = GetComponent<RectTransform>();
-        this.power = power;
+        this.type = type;
 
         this.value = value;
         SetIndex(index);

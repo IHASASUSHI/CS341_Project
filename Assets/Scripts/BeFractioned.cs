@@ -82,14 +82,14 @@ public class BeFractioned : MonoBehaviour
                 int val = node.value;
                 if (val <= 0) continue;
                 //highlight
-                GameObject p = Instantiate(nodePieceOverlay, overlay);
+                p = Instantiate(nodePieceOverlay, overlay);
                 Overlay over = p.GetComponent<Overlay>();
-                RectTransform rect = p.GetComponent<RectTransform>();
+                rect = p.GetComponent<RectTransform>();
                 rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
                 over.Initialize(new Point(x, y), highlights[0]);
                 //object
                 p = Instantiate(nodePiece, gameBoard);
-                NodePiece piece = p.GetComponent<NodePiece>();
+                piece = p.GetComponent<NodePiece>();
                 rect = p.GetComponent<RectTransform>();
                 rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
                 piece.Initialize(val, new Point(x, y), pieces[val - 1], true);
@@ -176,12 +176,26 @@ public class BeFractioned : MonoBehaviour
     {
         if (value == 0) // x
         {
-            for (int x = 0; x < width; i++){
-                Node node = getNodeAtPoint(point.y)
+            GameObject p = Instantiate(nodePiece, overlay);
+            NodePiece piece = p.GetComponent<NodePiece>();
+            RectTransform rect = p.GetComponent<RectTransform>();
+            rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * -1));
+            piece.Initialize(0, new Point(x, -1), pieces[val - 1], true);
+            node.SetOverlay(over);
+            node.SetPiece(piece);
+            for (int x = 0; x < width; i++)
+            {
+                Node node = getNodeAtPoint(x, point.y);
             }
         }
         if (value == 1) // y
+        {
+
+        }
         if (value == 2) // nuke
+        {
+
+        }
     }
 
     void Update()
@@ -191,6 +205,13 @@ public class BeFractioned : MonoBehaviour
         for (int i = 0; i < this.update.Count; i++)
         {
             if (!this.update[i].UpdatePiece()) finishedUpdating.Add(this.update[i]);
+            else
+            {
+                if (this.update[i].type.Equals("roller"))
+                {
+
+                }
+            }
         }
         for (int i = 0; i < finishedUpdating.Count; i++)
         {
@@ -209,7 +230,10 @@ public class BeFractioned : MonoBehaviour
                     Node node = getNodeAtPoint(piece.GetPoint());
                     if (piece != null)
                     {
-                        if (piece.power) applyPowerUp(piece.value, piece.index);
+                        if (piece.type.Equals("power")) {
+                            applyPowerUp(piece.value, piece.index); // hacky af but I'm despirate
+                            return;
+                        }
                         piece.gameObject.SetActive(false);
                         if (!dead.Contains(piece)) dead.Add(piece);
                     }
