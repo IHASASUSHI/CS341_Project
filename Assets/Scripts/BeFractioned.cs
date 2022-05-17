@@ -256,6 +256,10 @@ public class BeFractioned : MonoBehaviour
                 }
                 applyPowerUp(piece.value, piece.index, value);
             }
+            else
+            {
+                return false;
+            }
             Node node = getNodeAtPoint(piece.GetPoint());
             if (piece != null)
             {
