@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class Timer : MonoBehaviour
 {
@@ -11,10 +10,6 @@ public class Timer : MonoBehaviour
     float timeLeft;
     public GameObject gameoverText;
     public GameOverScreen GameOverScreen;
-
-    public TMP_Text scoreText;
-    public GameObject controller;
-    private int score;
 
     // Start is called before the first frame update
     void Start()
@@ -29,12 +24,6 @@ public class Timer : MonoBehaviour
     {
         if (timeLeft > 0)
         {
-            if (!(timerBar.fillAmount < 1f))
-            {
-                controller.GetComponent<BeFractioned>().WipeBoard();
-                //controller.GetComponent<BeFractioned>().StartGame();
-                timeLeft = maxTime / 2;
-            }
             timeLeft -= Time.deltaTime;
             timerBar.fillAmount = timeLeft / maxTime;
         }
@@ -43,16 +32,5 @@ public class Timer : MonoBehaviour
             gameoverText.SetActive(true);
             Time.timeScale = 0;
         }
-    }
-
-    public void IncreaseScore(int increase)
-    {
-        score += increase;
-        scoreText.text = "Score: " + score;
-    }
-
-    public void IncreaseTime(float increase)
-    {
-        timeLeft += increase;
     }
 }
