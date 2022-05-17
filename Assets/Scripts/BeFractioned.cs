@@ -170,6 +170,7 @@ public class BeFractioned : MonoBehaviour
         if (!piece.type.Equals("power"))
         {
             this.highlightedValue.Add(string.Format("1/{0}", piece.value));
+            Debug.Log(string.Format("1/{0}", piece.value));
         }
         else
         {
@@ -233,6 +234,8 @@ public class BeFractioned : MonoBehaviour
             if ((this.highlighted.Count > 1 || this.powerHighlighted))
             {
                 int[] frac = FractToValue.ToValue(this.highlightedValue);
+                Debug.Log(frac[0]);
+                Debug.Log(frac[1]);
                 if (frac[0] % frac[1] == 0)
                 {
                     power = true;
@@ -253,7 +256,7 @@ public class BeFractioned : MonoBehaviour
                         }
                         node.SetPiece(null);
                     }
-                    if (powerNode != null)
+                    if (powerValue - 2 >= 0)
                     {
                         NodePiece revived = dead[0];
                         revived.gameObject.SetActive(true);
@@ -287,11 +290,11 @@ public class BeFractioned : MonoBehaviour
             ApplyGravityToBoard();
 
             this.update.Remove(finishedUpdating[i]);
+            this.highlightedValue.Clear();
         }
         if (this.update.Count == 0)
         {
             this.updating = false;
-            this.highlightedValue.Clear();
         }
     }
 
