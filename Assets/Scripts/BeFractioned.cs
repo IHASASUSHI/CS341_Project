@@ -219,7 +219,7 @@ public class BeFractioned : MonoBehaviour
         for (int i = 0; i < finishedUpdating.Count; i++)
         {
             int[] frac = FractToValue.ToValue(this.highlightedValue);
-            if (this.highlighted.Count > 1 || this.powerHighlighted)
+            if ((this.highlighted.Count > 1 || this.powerHighlighted) && frac[0] % frac[1])
             {
                 Debug.Log(powerValue);
                 power = true;
