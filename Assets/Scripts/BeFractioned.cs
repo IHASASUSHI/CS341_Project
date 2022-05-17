@@ -86,8 +86,8 @@ public class BeFractioned : MonoBehaviour
             NodePiece piece = p.GetComponent<NodePiece>();
             RectTransform rect = p.GetComponent<RectTransform>();
             rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * -1));
-            piece.Initialize(0, new Point(x, -1), roller, "roller");
-            rollers.Add(piece);
+            piece.Initialize(0, new Point(x, -1), cutter, "cutter");
+            cutters.Add(piece);
             for (int y = 0; y < height; y++)
             {
                 if (x == 0)
@@ -96,8 +96,8 @@ public class BeFractioned : MonoBehaviour
                     piece = p.GetComponent<NodePiece>();
                     rect = p.GetComponent<RectTransform>();
                     rect.anchoredPosition = new Vector2(32 + (64 * -1), -32 - (64 * y));
-                    piece.Initialize(0, new Point(-1, y), cutter, "roller");
-                    cutters.Add(piece);
+                    piece.Initialize(0, new Point(-1, y), roller, "roller");
+                    rollers.Add(piece);
                 }
                 Node node = getNodeAtPoint(new Point(x, y));
 
@@ -167,15 +167,8 @@ public class BeFractioned : MonoBehaviour
     {
         if (this.highlighted.Contains(piece) || this.highlighted.Count == 8) return;
         this.highlighted.Add(piece);
-        if (!piece.type.Equals("power"))
-        {
-            this.highlightedValue.Add(string.Format("1/{0}", piece.value));
-            Debug.Log(string.Format("1/{0}", piece.value));
-        }
-        else
-        {
-            this.powerHighlighted = true;
-        }
+        if (!piece.type.Equals("power")) this.highlightedValue.Add(string.Format("1/{0}", piece.value));
+        else this.powerHighlighted = true;
         piece.Highlighted(true);
     }
 
@@ -187,7 +180,6 @@ public class BeFractioned : MonoBehaviour
             this.highlighted[i].Highlighted(false);
         }
         this.update.AddRange(this.highlighted);
-        this.powerHighlighted = false;
     }
 
     public bool isUpdating()
@@ -197,18 +189,17 @@ public class BeFractioned : MonoBehaviour
 
     public void applyPowerUp(int value, Point point)
     {
-        if (value == 0) // x
-        {
-            for (int x = 0; x < width; x++)
-            {
-                Node node = getNodeAtPoint(new Point(x, point.y));
-            }
-        }
         if (value == 1) // y
         {
-
+            this.cutters[point.x].pos = new Vector2(32 + (64 * point.x), -32 - (64 * height));
+            this.update.Add(this.cutters[point.x]);
         }
-        if (value == 2) // nuke
+        if (value == 2) // x
+        {
+            this.rollers[point.y].pos = new Vector2(32 + (64 * width), -32 - (64 * point.y));
+            this.update.Add(this.rollers[point.y]);
+        }
+        if (value == 3) // nuke
         {
 
         }
@@ -221,22 +212,14 @@ public class BeFractioned : MonoBehaviour
         for (int i = 0; i < this.update.Count; i++)
         {
             if (!this.update[i].UpdatePiece()) finishedUpdating.Add(this.update[i]);
-            else
-            {
-                if (this.update[i].type.Equals("roller"))
-                {
-
-                }
-            }
         }
         for (int i = 0; i < finishedUpdating.Count; i++)
         {
             if ((this.highlighted.Count > 1 || this.powerHighlighted))
             {
+                Debug.Log("dame");
                 int[] frac = FractToValue.ToValue(this.highlightedValue);
-                Debug.Log(frac[0]);
-                Debug.Log(frac[1]);
-                if (frac[0] % frac[1] == 0)
+                if (frac[0] % frac[1] == 0 && frac[0] != 0)
                 {
                     power = true;
                     powerNode = getNodeAtPoint(this.highlighted[0].GetPoint());
@@ -246,11 +229,6 @@ public class BeFractioned : MonoBehaviour
                         Node node = getNodeAtPoint(piece.GetPoint());
                         if (piece != null)
                         {
-                            if (piece.type.Equals("power"))
-                            {
-                                applyPowerUp(piece.value, piece.index); // hacky af but I'm despirate
-                                return;
-                            }
                             piece.gameObject.SetActive(false);
                             if (!dead.Contains(piece)) dead.Add(piece);
                         }
@@ -261,7 +239,7 @@ public class BeFractioned : MonoBehaviour
                         NodePiece revived = dead[0];
                         revived.gameObject.SetActive(true);
                         this.dead.RemoveAt(0);
-                        revived.Initialize(powerValue, powerNode.getPoint(), powerUpPieces[powerValue - 2], "tile");
+                        revived.Initialize(powerValue - 1, powerNode.getPoint(), powerUpPieces[powerValue - 2], "power");
                         revived.SetHighlight(powerNode.GetOverlay());
                         revived.rect.anchoredPosition = getPositionFromPoint(new Point(powerNode.getPoint().x, powerNode.getPoint().y));
 
@@ -272,25 +250,39 @@ public class BeFractioned : MonoBehaviour
                     }
                     ApplyGravityToBoard();
                 }
+                else
+                {
+                    foreach (NodePiece piece in this.highlighted)
+                    {
+                        if (piece.type.Equals("power"))
+                        {
+                            Debug.Log(this.update.Count);
+                            applyPowerUp(piece.value, piece.index);
+                        }
+                    }
+                }
             }
             this.highlighted.Clear();
-
-            List<Point> connected = isConnected(finishedUpdating[i].index, true);
-            foreach (Point pnt in connected)
+            this.highlightedValue.Clear();
+            this.powerHighlighted = false;
+            if (finishedUpdating[i].type.Equals("tile") || finishedUpdating[i].type.Equals("power"))
             {
-                Node node = getNodeAtPoint(pnt);
-                NodePiece nodePiece = node.getPiece();
-                if (nodePiece != null)
+                List<Point> connected = isConnected(finishedUpdating[i].index, true);
+                foreach (Point pnt in connected)
                 {
-                    nodePiece.gameObject.SetActive(false);
-                    dead.Add(nodePiece);
+                    Node node = getNodeAtPoint(pnt);
+                    NodePiece nodePiece = node.getPiece();
+                    if (nodePiece != null)
+                    {
+                        nodePiece.gameObject.SetActive(false);
+                        dead.Add(nodePiece);
+                    }
+                    node.SetPiece(null);
                 }
-                node.SetPiece(null);
+                ApplyGravityToBoard();
             }
-            ApplyGravityToBoard();
 
             this.update.Remove(finishedUpdating[i]);
-            this.highlightedValue.Clear();
         }
         if (this.update.Count == 0)
         {

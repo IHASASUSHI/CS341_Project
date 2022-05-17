@@ -20,10 +20,8 @@ public class FractToValue
 
         for (int i = 0; i < data.Count; i++)
         {
-            Debug.Log(data[i]);
             data[i] = data[i] * multiple / multiple;
         }
-        Debug.Log(data.Sum());
         return new int[] {data.Sum(), multiple};
     }
     static int gcf(int a, int b)
