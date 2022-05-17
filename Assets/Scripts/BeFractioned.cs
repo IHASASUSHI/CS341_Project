@@ -218,16 +218,13 @@ public class BeFractioned : MonoBehaviour
         }
         for (int i = 0; i < finishedUpdating.Count; i++)
         {
+            int[] frac = FractToValue.ToValue(this.highlightedValue);
             if (this.highlighted.Count > 1 || this.powerHighlighted)
             {
-                int[] frac = FractToValue.ToValue(this.highlightedValue);
-                if (frac[0] % frac[1] == 0)
-                {
-                    Debug.Log(powerValue);
-                    power = true;
-                    powerNode = getNodeAtPoint(this.highlighted[0].GetPoint());
-                    powerValue = frac[0] / frac[1];
-                }
+                Debug.Log(powerValue);
+                power = true;
+                powerNode = getNodeAtPoint(this.highlighted[0].GetPoint());
+                powerValue = frac[0] / frac[1];
                 foreach (NodePiece piece in this.highlighted)
                 {
                     Node node = getNodeAtPoint(piece.GetPoint());
