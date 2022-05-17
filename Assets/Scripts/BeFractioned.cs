@@ -16,8 +16,8 @@ public class BeFractioned : MonoBehaviour
     public GameObject nodePiece;
     public GameObject nodePieceOverlay;
 
-    int width = 8;
-    int height = 8;
+    int width = 10;
+    int height = 10;
 
     bool updating = false;
     Node[,] board;
@@ -175,6 +175,7 @@ public class BeFractioned : MonoBehaviour
                     {
                         pizza.gameObject.SetActive(false);
                         dead.Add(pizza);
+                        FindObjectOfType<AudioManager>().PlaySound("Combine Pizzas");
                     }
                     Node node = getNodeAtPoint(pizza.GetPoint());
                     node.SetPiece(null);
@@ -253,10 +254,12 @@ public class BeFractioned : MonoBehaviour
     {
         Dictionary<int, double> pizzaTypes = new Dictionary<int, double>();
         pizzaTypes.Add(1, 0.5);
-        pizzaTypes.Add(2, 0.33);
+        pizzaTypes.Add(2, 0.3333);
         pizzaTypes.Add(3, 0.25);
-        pizzaTypes.Add(4, 0.66);
-        pizzaTypes.Add(5, 0.75);
+        pizzaTypes.Add(4, 0.1666);
+        pizzaTypes.Add(5, 0.6666);
+        pizzaTypes.Add(6, 0.75);
+        pizzaTypes.Add(7, 0.8333);
 
         double sum = 0;
         List<Point> whole = new List<Point>();
