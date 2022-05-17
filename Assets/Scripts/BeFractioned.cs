@@ -59,7 +59,7 @@ public class BeFractioned : MonoBehaviour
         this.cutters = new List<NodePiece>();
         this.fractionPreview.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 200);
         this.fractionPreview.rectTransform.anchoredPosition = new Vector2(this.fractionPreview.rectTransform.anchoredPosition.x, this.fractionPreview.rectTransform.anchoredPosition.y - 10);
-        this.fractionPreview.bounds.SetMinMax(new Vector2(0,0), new Vector2(200, 200));
+        this.fractionPreview.bounds.SetMinMax(new Vector2(0, 0), new Vector2(200, 200));
 
         InitializeBoard();
         VerifyBoard();
@@ -74,6 +74,25 @@ public class BeFractioned : MonoBehaviour
             for (int x = 0; x < this.width; x++)
             {
                 board[x, y] = new Node((boardLayout.rows[y].row[x]) ? -1 : fillPiece(), new Point(x, y));
+            }
+        }
+    }
+
+    public void WipeBoard()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                Node node = getNodeAtPoint(new Point(x, y));
+
+                NodePiece nodePiece = node.getPiece();
+                if (nodePiece != null)
+                {
+                    nodePiece.gameObject.SetActive(false);
+                    dead.Add(nodePiece);
+                }
+                node.SetPiece(null);
             }
         }
     }
@@ -320,6 +339,7 @@ public class BeFractioned : MonoBehaviour
     void Update()
     {
         List<NodePiece> finishedUpdating = new List<NodePiece>();
+
         if (this.update.Count != 0) this.updating = true;
         for (int i = 0; i < this.update.Count; i++)
         {
@@ -401,21 +421,23 @@ public class BeFractioned : MonoBehaviour
             if (this.highlighted.Count > 1 || this.powerHighlighted)
             {
                 int[] frac = FractToValue.ToValue(this.highlightedValue);
-                Debug.Log(string.Format("{0} {1}", frac[0], frac[1]));
                 if (frac[0] % frac[1] == 0 && frac[0] != 0)
                 {
                     power = true;
                     powerNode = getNodeAtPoint(this.highlighted[0].GetPoint());
                     powerValue = frac[0] / frac[1];
-                    foreach (NodePiece piece in this.highlighted)
+                    foreach (NodePiece pizza in this.highlighted)
                     {
-                        if (!checkPower(piece))
+                        if (!checkPower(pizza))
                         {
-                            Node node = getNodeAtPoint(piece.GetPoint());
-                            if (piece != null)
+                            Node node = getNodeAtPoint(pizza.GetPoint());
+                            if (pizza != null)
                             {
-                                piece.gameObject.SetActive(false);
-                                if (!dead.Contains(piece)) dead.Add(piece);
+                                pizza.gameObject.SetActive(false);
+                                if (!dead.Contains(pizza)) dead.Add(pizza);
+                                FindObjectOfType<AudioManager>().PlaySound("Combine Pizzas");
+                                timerBar.GetComponent<Timer>().IncreaseScore(50);
+                                timerBar.GetComponent<Timer>().IncreaseTime(1.5f);
                             }
                             node.SetPiece(null);
                         }
@@ -471,10 +493,8 @@ public class BeFractioned : MonoBehaviour
 
             this.update.Remove(finishedUpdating[i]);
         }
-        if (this.update.Count == 0)
-        {
-            this.updating = false;
-        }
+
+        if (this.update.Count == 0) this.updating = false;
     }
 
     void ApplyGravityToBoard()
