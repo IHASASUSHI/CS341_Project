@@ -230,43 +230,45 @@ public class BeFractioned : MonoBehaviour
         }
         for (int i = 0; i < finishedUpdating.Count; i++)
         {
-            int[] frac = FractToValue.ToValue(this.highlightedValue);
-            if ((this.highlighted.Count > 1 || this.powerHighlighted) && frac[0] % frac[1] == 0)
+            if ((this.highlighted.Count > 1 || this.powerHighlighted))
             {
-                Debug.Log(powerValue);
-                power = true;
-                powerNode = getNodeAtPoint(this.highlighted[0].GetPoint());
-                powerValue = frac[0] / frac[1];
-                foreach (NodePiece piece in this.highlighted)
+                int[] frac = FractToValue.ToValue(this.highlightedValue);
+                if (frac[0] % frac[1] == 0)
                 {
-                    Node node = getNodeAtPoint(piece.GetPoint());
-                    if (piece != null)
+                    power = true;
+                    powerNode = getNodeAtPoint(this.highlighted[0].GetPoint());
+                    powerValue = frac[0] / frac[1];
+                    foreach (NodePiece piece in this.highlighted)
                     {
-                        if (piece.type.Equals("power"))
+                        Node node = getNodeAtPoint(piece.GetPoint());
+                        if (piece != null)
                         {
-                            applyPowerUp(piece.value, piece.index); // hacky af but I'm despirate
-                            return;
+                            if (piece.type.Equals("power"))
+                            {
+                                applyPowerUp(piece.value, piece.index); // hacky af but I'm despirate
+                                return;
+                            }
+                            piece.gameObject.SetActive(false);
+                            if (!dead.Contains(piece)) dead.Add(piece);
                         }
-                        piece.gameObject.SetActive(false);
-                        if (!dead.Contains(piece)) dead.Add(piece);
+                        node.SetPiece(null);
                     }
-                    node.SetPiece(null);
-                }
-                if (powerNode != null)
-                {
-                    NodePiece revived = dead[0];
-                    revived.gameObject.SetActive(true);
-                    this.dead.RemoveAt(0);
-                    revived.Initialize(powerValue, powerNode.getPoint(), powerUpPieces[powerValue - 2], "tile");
-                    revived.SetHighlight(powerNode.GetOverlay());
-                    revived.rect.anchoredPosition = getPositionFromPoint(new Point(powerNode.getPoint().x, powerNode.getPoint().y));
+                    if (powerNode != null)
+                    {
+                        NodePiece revived = dead[0];
+                        revived.gameObject.SetActive(true);
+                        this.dead.RemoveAt(0);
+                        revived.Initialize(powerValue, powerNode.getPoint(), powerUpPieces[powerValue - 2], "tile");
+                        revived.SetHighlight(powerNode.GetOverlay());
+                        revived.rect.anchoredPosition = getPositionFromPoint(new Point(powerNode.getPoint().x, powerNode.getPoint().y));
 
-                    powerNode.SetPiece(revived);
-                    ResetPiece(revived);
-                    power = false;
-                    powerNode = null;
+                        powerNode.SetPiece(revived);
+                        ResetPiece(revived);
+                        power = false;
+                        powerNode = null;
+                    }
+                    ApplyGravityToBoard();
                 }
-                ApplyGravityToBoard();
             }
             this.highlighted.Clear();
 
@@ -286,7 +288,11 @@ public class BeFractioned : MonoBehaviour
 
             this.update.Remove(finishedUpdating[i]);
         }
-        if (this.update.Count == 0) this.updating = false;
+        if (this.update.Count == 0)
+        {
+            this.updating = false;
+            this.highlightedValue.Clear();
+        }
     }
 
     void ApplyGravityToBoard()
