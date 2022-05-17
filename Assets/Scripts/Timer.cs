@@ -28,8 +28,7 @@ public class Timer : MonoBehaviour
         }
         else
         {
-<<<<<<< Updated upstream
-            gameoverText.SetActive(true);
+            //gameoverText.SetActive(true);
             FindObjectOfType<AudioManager>().PlaySound("Game Over");
             Time.timeScale = 0;
         }
