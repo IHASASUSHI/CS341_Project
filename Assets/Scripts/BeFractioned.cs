@@ -21,14 +21,17 @@ public class BeFractioned : MonoBehaviour
     public GameObject nodePiece;
     public GameObject nodePieceOverlay;
 
+    public GameObject timerBar;
     public TMP_Text fractionPreview;
 
     int width = 10;
     int height = 10;
     int powerValue = 0;
+
     bool updating = false;
     bool power = false;
     bool powerHighlighted = false;
+
     Node powerNode = null;
     Node[,] board;
 
