@@ -48,16 +48,17 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         pos = new Vector2(32 + (64 * index.x), -32 - (64 * index.y));
     }
 
-    public void MovePositionTo(Vector2 move)
+    public void MovePositionTo(Vector2 move, float speed)
     {
-        this.rect.anchoredPosition = Vector2.Lerp(this.rect.anchoredPosition, move, Time.deltaTime * 16f);
+        this.rect.anchoredPosition = Vector2.Lerp(this.rect.anchoredPosition, move, speed);
     }
 
     public bool UpdatePiece()
     {
         if (Vector2.Distance(this.rect.anchoredPosition, this.pos) > 1)
         {
-            MovePositionTo(this.pos);
+            if (this.type.Equals("cutter") || this.type.Equals("roller")) MovePositionTo(this.pos, 0.01f);
+            else MovePositionTo(this.pos, 0.02f);
             this.updating = true;
             return true;
         }
@@ -77,6 +78,11 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     public void Highlighted(bool yes)
     {
         this.highlight.SetVisible(yes);
+    }
+
+    public void SetVisible(bool on)
+    {
+        this.img.enabled = on;
     }
     void UpdateName()
     {

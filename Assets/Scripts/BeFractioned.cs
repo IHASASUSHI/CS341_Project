@@ -87,6 +87,7 @@ public class BeFractioned : MonoBehaviour
             RectTransform rect = p.GetComponent<RectTransform>();
             rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * -1));
             piece.Initialize(0, new Point(x, -1), cutter, "cutter");
+            piece.SetVisible(false);
             cutters.Add(piece);
             for (int y = 0; y < height; y++)
             {
@@ -97,6 +98,7 @@ public class BeFractioned : MonoBehaviour
                     rect = p.GetComponent<RectTransform>();
                     rect.anchoredPosition = new Vector2(32 + (64 * -1), -32 - (64 * y));
                     piece.Initialize(0, new Point(-1, y), roller, "roller");
+                    piece.SetVisible(false);
                     rollers.Add(piece);
                 }
                 Node node = getNodeAtPoint(new Point(x, y));
@@ -191,11 +193,13 @@ public class BeFractioned : MonoBehaviour
     {
         if (value == 1) // y
         {
+            this.cutters[point.x].SetVisible(true);
             this.cutters[point.x].pos = new Vector2(32 + (64 * point.x), -32 - (64 * height));
             this.update.Add(this.cutters[point.x]);
         }
         if (value == 2) // x
         {
+            this.rollers[point.y].SetVisible(true);
             this.rollers[point.y].pos = new Vector2(32 + (64 * width), -32 - (64 * point.y));
             this.update.Add(this.rollers[point.y]);
         }
@@ -212,12 +216,16 @@ public class BeFractioned : MonoBehaviour
         for (int i = 0; i < this.update.Count; i++)
         {
             if (!this.update[i].UpdatePiece()) finishedUpdating.Add(this.update[i]);
+            else if (this.update[i].type.Equals("cutter") || this.update[i].type.Equals("roller"))
+            {
+                // this.update[i].SetVisible(false);
+                // this.update[i].ResetPosition();
+            }
         }
         for (int i = 0; i < finishedUpdating.Count; i++)
         {
             if ((this.highlighted.Count > 1 || this.powerHighlighted))
             {
-                Debug.Log("dame");
                 int[] frac = FractToValue.ToValue(this.highlightedValue);
                 if (frac[0] % frac[1] == 0 && frac[0] != 0)
                 {
