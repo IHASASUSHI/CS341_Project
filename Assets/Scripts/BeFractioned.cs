@@ -29,6 +29,8 @@ public class BeFractioned : MonoBehaviour
     List<NodePiece> update;
     List<NodePiece> dead;
     List<NodePiece> highlighted;
+    List<NodePiece> rollers;
+    List<NodePiece> cutters;
     List<string> highlightedValue;
 
     System.Random random;
@@ -82,17 +84,17 @@ public class BeFractioned : MonoBehaviour
                 int val = node.value;
                 if (val <= 0) continue;
                 //highlight
-                p = Instantiate(nodePieceOverlay, overlay);
+                GameObject p = Instantiate(nodePieceOverlay, overlay);
                 Overlay over = p.GetComponent<Overlay>();
-                rect = p.GetComponent<RectTransform>();
+                RectTransform rect = p.GetComponent<RectTransform>();
                 rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
                 over.Initialize(new Point(x, y), highlights[0]);
                 //object
                 p = Instantiate(nodePiece, gameBoard);
-                piece = p.GetComponent<NodePiece>();
+                NodePiece piece = p.GetComponent<NodePiece>();
                 rect = p.GetComponent<RectTransform>();
                 rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
-                piece.Initialize(val, new Point(x, y), pieces[val - 1], true);
+                piece.Initialize(val, new Point(x, y), pieces[val - 1], "tile");
                 piece.SetHighlight(over);
                 node.SetPiece(piece);
                 node.SetOverlay(over);
@@ -145,7 +147,7 @@ public class BeFractioned : MonoBehaviour
     {
         if (this.highlighted.Contains(piece) || this.highlighted.Count == 8) return;
         this.highlighted.Add(piece);
-        if (!piece.power)
+        if (!piece.type.Equals("power"))
         {
             this.highlightedValue.Add(string.Format("1/{0}", piece.value));
         }
@@ -176,16 +178,9 @@ public class BeFractioned : MonoBehaviour
     {
         if (value == 0) // x
         {
-            GameObject p = Instantiate(nodePiece, overlay);
-            NodePiece piece = p.GetComponent<NodePiece>();
-            RectTransform rect = p.GetComponent<RectTransform>();
-            rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * -1));
-            piece.Initialize(0, new Point(x, -1), pieces[val - 1], true);
-            node.SetOverlay(over);
-            node.SetPiece(piece);
-            for (int x = 0; x < width; i++)
+            for (int x = 0; x < width; x++)
             {
-                Node node = getNodeAtPoint(x, point.y);
+                Node node = getNodeAtPoint(new Point(x, point.y));
             }
         }
         if (value == 1) // y
@@ -244,7 +239,7 @@ public class BeFractioned : MonoBehaviour
                     NodePiece revived = dead[0];
                     revived.gameObject.SetActive(true);
                     this.dead.RemoveAt(0);
-                    revived.Initialize(powerValue, powerNode.getPoint(), powerUpPieces[powerValue - 2], true);
+                    revived.Initialize(powerValue, powerNode.getPoint(), powerUpPieces[powerValue - 2], "tile");
                     revived.SetHighlight(powerNode.GetOverlay());
                     revived.rect.anchoredPosition = getPositionFromPoint(new Point(powerNode.getPoint().x, powerNode.getPoint().y));
 
@@ -323,7 +318,7 @@ public class BeFractioned : MonoBehaviour
                             RectTransform rect = obj.GetComponent<RectTransform>();
                             piece = n;
                         }
-                        piece.Initialize(newVal, p, pieces[newVal - 1], true);
+                        piece.Initialize(newVal, p, pieces[newVal - 1], "tile");
                         piece.SetHighlight(getNodeAtPoint(p).GetOverlay());
                         piece.rect.anchoredPosition = getPositionFromPoint(new Point(x, -1));
 
