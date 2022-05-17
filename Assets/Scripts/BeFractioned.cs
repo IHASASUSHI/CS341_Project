@@ -169,7 +169,14 @@ public class BeFractioned : MonoBehaviour
     {
         if (this.highlighted.Contains(piece) || this.highlighted.Count == 8) return;
         this.highlighted.Add(piece);
-        if (!piece.type.Equals("power")) this.highlightedValue.Add(string.Format("1/{0}", piece.value));
+        if (!piece.type.Equals("power"))
+        {
+            switch (piece.value)
+            {
+
+            }
+            this.highlightedValue.Add(string.Format("1/{0}", piece.value));
+        }
         else this.powerHighlighted = true;
         piece.Highlighted(true);
     }
@@ -215,11 +222,20 @@ public class BeFractioned : MonoBehaviour
         if (this.update.Count != 0) this.updating = true;
         for (int i = 0; i < this.update.Count; i++)
         {
-            if (!this.update[i].UpdatePiece()) finishedUpdating.Add(this.update[i]);
+            if (!this.update[i].UpdatePiece())
+            {
+                if (this.update[i].type.Equals("cutter") || this.update[i].type.Equals("roller"))
+                {
+                    this.update[i].SetVisible(false);
+                    this.update[i].ResetPosition();
+                }
+                finishedUpdating.Add(this.update[i]);
+            }
             else if (this.update[i].type.Equals("cutter") || this.update[i].type.Equals("roller"))
             {
-                // this.update[i].SetVisible(false);
-                // this.update[i].ResetPosition();
+                NodePiece piece = getNodeAtPoint(this.update[i].pos).getPiece();
+                finishedUpdating.Add(piece);
+                this.highlighted.Add(piece);
             }
         }
         for (int i = 0; i < finishedUpdating.Count; i++)
