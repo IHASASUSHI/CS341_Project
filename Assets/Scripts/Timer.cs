@@ -10,6 +10,7 @@ public class Timer : MonoBehaviour
     public float maxTime = 5f;
     float timeLeft;
     public GameObject gameoverText;
+    public GameOverScreen GameOverScreen;
 
     public TMP_Text scoreText;
     public GameObject controller;

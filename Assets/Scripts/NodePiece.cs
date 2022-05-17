@@ -8,7 +8,6 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 {
     public int value;
     public Point index;
-    public string type;
 
     [HideInInspector]
     public Vector2 pos;
@@ -19,90 +18,74 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     Image img;
     Overlay highlight;
 
-    public void Initialize(int value, Point index, Sprite piece, string type)
-    {
+    public void Initialize(int value, Point index, Sprite piece) {
         this.img = GetComponent<Image>();
         this.rect = GetComponent<RectTransform>();
 
         this.value = value;
-        this.type = type;
         SetIndex(index);
         this.img.sprite = piece;
         this.highlight = null;
     }
 
-    public void SetIndex(Point p)
-    {
+    public void SetIndex(Point p) {
         this.index = p;
         ResetPosition();
         UpdateName();
     }
 
-    public void SetHighlight(Overlay highlight)
-    {
+    public void SetHighlight(Overlay highlight) {
         this.highlight = highlight;
     }
 
-    public void ResetPosition()
-    {
-        this.pos = new Vector2(32 + (64 * index.x), -32 - (64 * index.y));
+    public void ResetPosition() {
+        pos = new Vector2(32 + (64 * index.x), -32 - (64 * index.y));
     }
 
-    public void MovePositionTo(Vector2 move, float speed)
-    {
-        this.rect.anchoredPosition = Vector2.Lerp(this.rect.anchoredPosition, move, speed);
+    public void MovePosition(Vector2 move) {
+        this.rect.anchoredPosition += move * Time.deltaTime * 16f;
     }
 
-    public bool UpdatePiece()
-    {
-        if (Vector2.Distance(this.rect.anchoredPosition, this.pos) > 1)
-        {
-            if (this.type.Equals("cutter") || this.type.Equals("roller")) MovePositionTo(this.pos, 0.01f);
-            else MovePositionTo(this.pos, 0.02f);
+    public void MovePositionTo(Vector2 move) {
+        this.rect.anchoredPosition = Vector2.Lerp(this.rect.anchoredPosition, move, Time.deltaTime * 16f);
+    }
+
+    public bool UpdatePiece() {
+        if(Vector2.Distance(this.rect.anchoredPosition, pos) > 1) {
+            MovePositionTo(this.pos);
             this.updating = true;
             return true;
         }
-        else
-        {
+        else {
             rect.anchoredPosition = pos;
             updating = false;
             return false;
         }
     }
 
-    public Point GetPoint()
-    {
+    public Point GetPoint() {
         return this.index;
     }
 
-    public void Highlighted(bool yes)
-    {
+    public void Highlighted(bool yes) {
         this.highlight.SetVisible(yes);
     }
-
-    public void SetVisible(bool on)
-    {
-        this.img.enabled = on;
-    }
-    void UpdateName()
-    {
+    void UpdateName() {
         transform.name = "Node [" + index.x + ", " + index.y + "]";
     }
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        if (this.updating || this.type.Equals("roller") || this.type.Equals("cutter")) return;
+    public void OnPointerDown(PointerEventData eventData) {
+        if(this.updating) return;
         Highlight.Instance.HighlightPiece(this);
     }
 
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        if (this.type.Equals("tile") || this.type.Equals("power")) Highlight.Instance.DropPiece();
+    public void OnPointerUp(PointerEventData eventData) {
+        Highlight.Instance.DropPiece();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (eventData.eligibleForClick == true && (this.type.Equals("tile") || this.type.Equals("power")))
+        if (eventData.eligibleForClick == true)
         {
             Highlight.Instance.HighlightPiece(this);
         }
