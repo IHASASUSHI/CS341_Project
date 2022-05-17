@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class TimerScript : MonoBehaviour
 {
@@ -9,6 +10,9 @@ public class TimerScript : MonoBehaviour
     public float maxTime = 5f;
     float timeLeft;
     public GameObject gameoverText;
+
+    private int score = 0;
+    public TMP_Text scoreText;
 
     // Start is called before the first frame update
     void Start()
@@ -31,5 +35,11 @@ public class TimerScript : MonoBehaviour
             gameoverText.SetActive(true);
             Time.timeScale = 0;
         }
+    }
+
+    public void IncreaseScore(int increase)
+    {
+        score += increase;
+        scoreText.text = "Score: " + score;
     }
 }

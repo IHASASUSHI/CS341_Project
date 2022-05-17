@@ -13,6 +13,8 @@ public class BeFractioned : MonoBehaviour
     [Header("Prefabs")]
     public GameObject nodePiece;
 
+    public GameObject timerBar;
+
     int width = 10;
     int height = 10;
     Node[,] board;
@@ -198,6 +200,7 @@ public class BeFractioned : MonoBehaviour
                         dead.Add(nodePiece);
                     }
                     node.SetPiece(null);
+                    timerBar.GetComponent<TimerScript>().IncreaseScore(50);
                 }
                 ApplyGravityToBoard();
             }
