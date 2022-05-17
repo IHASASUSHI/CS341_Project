@@ -376,6 +376,7 @@ MonoBehaviour:
   - {fileID: 5528609633622603068, guid: 2c97df9695607b04c92ec362851a0890, type: 3}
   gameBoard: {fileID: 1902705638}
   nodePiece: {fileID: 4472926955625980874, guid: e0edfee1799e7454bb5a83dad59a00aa, type: 3}
+  timerBar: {fileID: 666439038}
 --- !u!4 &326122755
 Transform:
   m_ObjectHideFlags: 0
@@ -551,7 +552,7 @@ MonoBehaviour:
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 1
+  m_FillAmount: 0.5
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 1
@@ -576,9 +577,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8ce2bbf237bf0c419270fd97c25f7bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxTime: 5
+  maxTime: 15
   gameoverText: {fileID: 1164991201}
   scoreText: {fileID: 161747784}
+  controller: {fileID: 326122753}
 --- !u!1 &1164991201
 GameObject:
   m_ObjectHideFlags: 0

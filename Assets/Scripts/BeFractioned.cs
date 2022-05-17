@@ -45,7 +45,7 @@ public class BeFractioned : MonoBehaviour
         return flip;
     }
 
-    void StartGame()
+    public void StartGame()
     {
         string seed = "0";
         random = new System.Random(seed.GetHashCode());
@@ -58,7 +58,7 @@ public class BeFractioned : MonoBehaviour
         InstantiateBoard();
     }
 
-    void InitializeBoard()
+    public void InitializeBoard()
     {
         board = new Node[this.width, this.height];
         for (int y = 0; y < this.height; y++)
@@ -116,6 +116,25 @@ public class BeFractioned : MonoBehaviour
                 rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
                 piece.Initialize(val, new Point(x, y), pieces[val - 1]);
                 node.SetPiece(piece);
+            }
+        }
+    }
+
+    public void WipeBoard()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                Node node = getNodeAtPoint(new Point(x, y));
+
+                NodePiece nodePiece = node.getPiece();
+                if (nodePiece != null)
+                {
+                    nodePiece.gameObject.SetActive(false);
+                    dead.Add(nodePiece);
+                }
+                node.SetPiece(null);
             }
         }
     }
@@ -201,6 +220,7 @@ public class BeFractioned : MonoBehaviour
                     }
                     node.SetPiece(null);
                     timerBar.GetComponent<TimerScript>().IncreaseScore(50);
+                    timerBar.GetComponent<TimerScript>().IncreaseTime(.3f);
                 }
                 ApplyGravityToBoard();
             }
@@ -210,7 +230,7 @@ public class BeFractioned : MonoBehaviour
         }
     }
 
-    void ApplyGravityToBoard()
+    public void ApplyGravityToBoard()
     {
         for(int x = 0; x < width; x++)
         {

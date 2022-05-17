@@ -14,6 +14,8 @@ public class TimerScript : MonoBehaviour
     private int score = 0;
     public TMP_Text scoreText;
 
+    public GameObject controller;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +29,12 @@ public class TimerScript : MonoBehaviour
     {
         if (timeLeft > 0)
         {
+            if (!(timerBar.fillAmount < 1f))
+            {
+                controller.GetComponent<BeFractioned>().WipeBoard();
+                controller.GetComponent<BeFractioned>().StartGame();
+                timeLeft = maxTime / 2;
+            }
             timeLeft -= Time.deltaTime;
             timerBar.fillAmount = timeLeft / maxTime;
         }
@@ -41,5 +49,10 @@ public class TimerScript : MonoBehaviour
     {
         score += increase;
         scoreText.text = "Score: " + score;
+    }
+
+    public void IncreaseTime(float increase)
+    {
+        timeLeft += increase;
     }
 }
