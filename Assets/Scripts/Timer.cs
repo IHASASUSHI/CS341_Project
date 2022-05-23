@@ -29,7 +29,6 @@ public class Timer : MonoBehaviour
         }
         else
         {
-            //gameoverText.SetActive(true);
             GameOverScreen.Setup();
         }
     }
