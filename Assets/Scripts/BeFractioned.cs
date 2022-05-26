@@ -213,27 +213,24 @@ public class BeFractioned : MonoBehaviour
             switch (piece.value)
             {
                 case 1:
-                    value = "1/1";
-                    break;
-                case 2:
                     value = "1/2";
                     break;
-                case 3:
+                case 2:
                     value = "1/3";
                     break;
-                case 4:
+                case 3:
                     value = "1/4";
                     break;
-                case 5:
+                case 4:
                     value = "1/6";
                     break;
-                case 6:
+                case 5:
                     value = "2/3";
                     break;
-                case 7:
+                case 6:
                     value = "3/4";
                     break;
-                case 8:
+                case 7:
                     value = "5/6";
                     break;
             }
