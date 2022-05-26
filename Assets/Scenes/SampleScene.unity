@@ -389,7 +389,9 @@ MonoBehaviour:
   gameBoard: {fileID: 1902705638}
   overlay: {fileID: 1091378098}
   nodePiece: {fileID: 4472926955625980874, guid: bba61814967e5524ab67e4f484de3703, type: 3}
+  childNode: {fileID: 4472926955625980874, guid: 4907681e6e70ef3479e6416368d17f2c, type: 3}
   nodePieceOverlay: {fileID: 4472926955625980874, guid: e0edfee1799e7454bb5a83dad59a00aa, type: 3}
+  timerBar: {fileID: 0}
   fractionPreview: {fileID: 198002189}
 --- !u!4 &326122755
 Transform:

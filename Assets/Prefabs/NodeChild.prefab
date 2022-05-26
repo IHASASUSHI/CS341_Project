@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 4008470227965935186}
   - component: {fileID: 1741950977695056531}
   - component: {fileID: 7614232660610613962}
-  - component: {fileID: 7944831232285077584}
+  - component: {fileID: 2269621434941135673}
   m_Layer: 5
-  m_Name: NodePiece
+  m_Name: NodeChild
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61,7 +61,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -77,7 +77,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7944831232285077584
+--- !u!114 &2269621434941135673
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -86,14 +86,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4472926955625980874}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 008231ad4a08abb47b8f634ef5333a8f, type: 3}
+  m_Script: {fileID: 11500000, guid: dc177c79537257849aafab701acc8799, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 0
   index:
     x: 0
     y: 0
-  type: 
-  childPieces: []
   pos: {x: 0, y: 0}
   rect: {fileID: 0}
