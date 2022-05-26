@@ -17,8 +17,7 @@ public class Overlay : MonoBehaviour
     bool updating;
     Image img;
 
-    public void Initialize(Point index, Sprite piece)
-    {
+    public void Initialize(Point index, Sprite piece){
         this.img = GetComponent<Image>();
         this.rect = GetComponent<RectTransform>();
 
@@ -27,19 +26,27 @@ public class Overlay : MonoBehaviour
         this.img.enabled = false;
     }
 
-    public void SetIndex(Point p)
-    {
+    public void SetIndex(Point p) {
         this.index = p;
         UpdateName();
     }
+    public bool UpdatePiece() {
+        if(Vector2.Distance(this.rect.anchoredPosition, pos) > 1) {
+            this.updating = true;
+            return true;
+        }
+        else {
+            rect.anchoredPosition = pos;
+            updating = false;
+            return false;
+        }
+    }
 
-    public void SetVisible(bool on)
-    {
+    public void SetVisible(bool on){
         this.img.enabled = on;
     }
 
-    void UpdateName()
-    {
+    void UpdateName() {
         transform.name = "Overlay [" + index.x + ", " + index.y + "]";
     }
 }

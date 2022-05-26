@@ -30,6 +30,7 @@ public class Highlight : MonoBehaviour
     {
         if (this.game.isUpdating()) return;
         this.game.addHighlighted(piece);
+        
     }
 
     public void DropPiece()
