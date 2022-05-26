@@ -116,7 +116,7 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
                 if (this.hitByPower.Equals("roller")) rollerFling(100f);
                 else if (this.hitByPower.Equals("cutter")) cutterSlice();
             }
-            else MovePositionTo(this.pos, .1f);
+            else MovePositionTo(this.pos, 1f);
             this.updating = true;
             return true;
         }
