@@ -27,11 +27,13 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     System.Random random;
 
-    public void Initialize(int value, Point index, Sprite piece) {
+    public void Initialize(int value, Point index, Sprite piece, string type)
+    {
         this.img = GetComponent<Image>();
         this.rect = GetComponent<RectTransform>();
 
         this.value = value;
+        this.type = type;
         SetIndex(index);
         this.img.sprite = piece;
         // This is for later use when we want to rotate
@@ -44,7 +46,8 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         this.yPos = (float)random.NextDouble();
     }
 
-    public void SetIndex(Point p) {
+    public void SetIndex(Point p)
+    {
         this.index = p;
         ResetPosition();
         UpdateName();
@@ -117,36 +120,47 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             this.updating = true;
             return true;
         }
-        else {
+        else
+        {
             rect.anchoredPosition = pos;
             updating = false;
             return false;
         }
     }
 
-    public Point GetPoint() {
+    public Point GetPoint()
+    {
         return this.index;
     }
 
-    public void Highlighted(bool yes) {
+    public void Highlighted(bool yes)
+    {
         this.highlight.SetVisible(yes);
     }
-    void UpdateName() {
+
+    public void SetVisible(bool on)
+    {
+        this.img.enabled = on;
+    }
+    void UpdateName()
+    {
         transform.name = "Node [" + index.x + ", " + index.y + "]";
     }
 
-    public void OnPointerDown(PointerEventData eventData) {
-        if(this.updating) return;
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (this.updating || this.type.Equals("roller") || this.type.Equals("cutter")) return;
         Highlight.Instance.HighlightPiece(this);
     }
 
-    public void OnPointerUp(PointerEventData eventData) {
-        Highlight.Instance.DropPiece();
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        if (this.type.Equals("tile") || this.type.Equals("power")) Highlight.Instance.DropPiece();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (eventData.eligibleForClick == true)
+        if (eventData.eligibleForClick == true && (this.type.Equals("tile") || this.type.Equals("power")))
         {
             Highlight.Instance.HighlightPiece(this);
         }
