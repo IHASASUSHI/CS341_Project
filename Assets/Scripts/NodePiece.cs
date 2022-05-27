@@ -36,8 +36,6 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         this.type = type;
         SetIndex(index);
         this.img.sprite = piece;
-        // This is for later use when we want to rotate
-        // this.rect.transform.rotation = Quaternion.Euler(new Vector3(0,0,90));
         this.highlight = null;
         this.hitByPower = "";
         string seed = "0";
@@ -99,22 +97,25 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void rollerFling(float speed)
     {
-        //this.yPos += this.velocity * speed + (1f / 2f * (-9.8f * (float)Math.Pow(speed, 2)));
-        //foreach (ChildNode piece in childPieces) piece.MovePositionTo(new Vector2(this.pos.x + this.xPos, this.yPos));
+        this.yPos += this.velocity * speed + (1f / 2f * (-9.8f * (float)Math.Pow(speed, 2)));
+        Debug.Log(string.Format("autism {0}", this.pos.y + this.yPos));
+        foreach (ChildNode piece in childPieces) piece.MovePositionTo(new Vector2(this.pos.x + this.xPos, this.pos.y - this.yPos));
     }
 
     public bool UpdatePiece()
     {
-        //Debug.Log(Vector2.Distance(this.rect.anchoredPosition, this.pos));
         if (Vector2.Distance(this.rect.anchoredPosition, this.pos) > 1)
         {
-            if (this.type.Equals("cutter") || this.type.Equals("roller")) MovePositionTo(this.pos, 5f);
-            if (!this.hitByPower.Equals("") && this.rect.anchoredPosition.y > -620)
-            {
-                if (this.hitByPower.Equals("roller")) rollerFling(100f);
-                else if (this.hitByPower.Equals("cutter")) cutterSlice();
-            }
-            else MovePositionTo(this.pos, 5f);
+            if (this.type.Equals("cutter") || this.type.Equals("roller")) MovePositionTo(this.pos, .25f);
+            else MovePositionTo(this.pos, 2f);
+            this.updating = true;
+            return true;
+        }
+        else if (!this.hitByPower.Equals("") && Vector2.Distance(childPieces[0].rect.anchoredPosition, childPieces[0].pos) < 1080)
+        {
+            Debug.Log(Vector2.Distance(childPieces[0].rect.anchoredPosition, childPieces[0].pos));
+            if (this.hitByPower.Equals("roller")) rollerFling(.25f);
+            else if (this.hitByPower.Equals("cutter")) cutterSlice();
             this.updating = true;
             return true;
         }

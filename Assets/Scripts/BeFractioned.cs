@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
 
 public class BeFractioned : MonoBehaviour
 {
     public ArrayLayout boardLayout;
 
     [Header("UI Elements")]
+    public Sprite plate;
+    public Sprite blank;
     public Sprite[] pieces;
     public Sprite[] powerUpPieces;
     public Sprite[] highlights;
@@ -138,16 +141,19 @@ public class BeFractioned : MonoBehaviour
                 piece = p.GetComponent<NodePiece>();
                 rect = p.GetComponent<RectTransform>();
                 rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
-                piece.Initialize(val, new Point(x, y), pieces[val - 1], "tile");
+                piece.Initialize(val, new Point(x, y), plate, "tile");
+                int degree = 0;
                 for (int i = 0; i < 12; i++)
                 {
                     p = Instantiate(childNode, gameBoard);
                     ChildNode child = p.GetComponent<ChildNode>();
                     rect = p.GetComponent<RectTransform>();
                     rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
-                    child.Initialize(val, new Point(x, y), pieces[val - 1]);
-                    child.setImage(i);
+                    initializeChild(i, child, val, new Point(x, y), degree);
                     piece.childPieces.Add(child);
+                    if (Array.Exists(new int[] { 2, 3, 8, 9}, e => e == i)) degree += 30;
+                    else if (Array.Exists(new int[] { 0 , 5, 6, 11 }, e => e == i)) degree += 45;
+                    else degree += 15;
                 }
                 piece.SetHighlight(over);
                 node.SetPiece(piece);
@@ -156,21 +162,38 @@ public class BeFractioned : MonoBehaviour
         }
     }
 
-    void AddPoints(ref List<Point> points, List<Point> add)
+    void initializeChild(int index, ChildNode child, int value, Point p, int degree)
     {
-        foreach (Point p in add)
+        switch (value)
         {
-            bool doAdd = true;
-            for (int i = 0; i < points.Count; i++)
-            {
-                if (points[i].Equals(p))
-                {
-                    doAdd = false;
-                    break;
-                }
-            }
-
-            if (doAdd) points.Add(p);
+            case 1:
+                if (index == 0) child.Initialize(value, p, pieces[value - 1], degree);
+                else child.Initialize(value, p, blank, degree);
+                break;
+            case 2:
+                if (index == 0) child.Initialize(value, p, pieces[value - 1], degree);
+                else child.Initialize(value, p, blank, degree);
+                break;
+            case 3:
+                if (index == 0) child.Initialize(value, p, pieces[value - 1], degree);
+                else child.Initialize(value, p, blank, degree);
+                break;
+            case 4:
+                if (index == 0) child.Initialize(value, p, pieces[value - 1], degree);
+                else child.Initialize(value, p, blank, degree);
+                break;
+            case 5:
+                if (Array.Exists(new int[] { 0, 4 }, e => e == index)) child.Initialize(value, p, pieces[value - 1], degree);
+                else child.Initialize(value, p, blank, degree);
+                break;
+            case 6:
+                if (Array.Exists(new int[] { 0, 3, 6 }, e => e == index)) child.Initialize(value, p, pieces[value - 1], degree);
+                else child.Initialize(value, p, blank, degree);
+                break;
+            case 7:
+                if (Array.Exists(new int[] { 0, 2, 4, 6, 8 }, e => e == index)) child.Initialize(value, p, pieces[value - 1], degree);
+                else child.Initialize(value, p, blank, degree);
+                break;
         }
     }
 
@@ -350,6 +373,7 @@ public class BeFractioned : MonoBehaviour
             {
                 if (this.update[i].wasHitByPower())
                 {
+                    Debug.Log("REEEEEEE");
                     this.update[i].gameObject.SetActive(false);
                     this.dead.Add(this.update[i]);
                     foreach (ChildNode child in this.update[i].childPieces) child.gameObject.SetActive(false);
@@ -468,17 +492,22 @@ public class BeFractioned : MonoBehaviour
                         }
                         revived.gameObject.SetActive(true);
                         foreach (ChildNode child in revived.childPieces) child.gameObject.SetActive(true);
+                        List<ChildNode> temp = revived.childPieces;
                         if (powerValue == 2)
                         {
                             int value = random.Next(0, 2);
-                            foreach (ChildNode child in revived.childPieces) child.Initialize(value + 1, powerNode.getPoint(), powerUpPieces[value]);
+
+                            Debug.Log(revived.childPieces.Count);
+                            foreach (ChildNode child in revived.childPieces) child.Initialize(value + 1, powerNode.getPoint(), blank, -1);
                             revived.Initialize(value + 1, powerNode.getPoint(), powerUpPieces[value], "power");
                         }
                         else
                         {
-                            foreach (ChildNode child in revived.childPieces) child.Initialize(3, powerNode.getPoint(), powerUpPieces[2]);
+                            Debug.Log(revived.childPieces.Count);
+                            foreach (ChildNode child in revived.childPieces) child.Initialize(3, powerNode.getPoint(), blank, -1);
                             revived.Initialize(3, powerNode.getPoint(), powerUpPieces[2], "power");
                         }
+                        revived.childPieces = temp;
                         revived.SetHighlight(powerNode.GetOverlay());
                         revived.rect.anchoredPosition = getPositionFromPoint(new Point(powerNode.getPoint().x, powerNode.getPoint().y));
                         this.dead.Remove(revived);
@@ -559,11 +588,13 @@ public class BeFractioned : MonoBehaviour
                     Vector2 spawn = new Vector2(32 + (x * 64), 32 + (1 * 64));
 
                     revived.gameObject.SetActive(true);
+                    List<ChildNode> temp = revived.childPieces;
                     foreach (ChildNode child in revived.childPieces) child.gameObject.SetActive(true);
                     foreach (ChildNode child in revived.childPieces) child.TeleportTo(spawn);
-                    foreach (ChildNode child in revived.childPieces) child.Initialize(newVal, p, pieces[newVal - 1]);
+                    for (int i = 0; i < 12; i++) initializeChild(i, revived.childPieces[i], newVal, p, -1);
                     revived.TeleportTo(spawn);
-                    revived.Initialize(newVal, p, pieces[newVal - 1], "tile");
+                    revived.Initialize(newVal, p, plate, "tile");
+                    revived.childPieces = temp;
                     revived.SetHighlight(node.GetOverlay());
                     node.SetPiece(revived);
                     spawned = true;

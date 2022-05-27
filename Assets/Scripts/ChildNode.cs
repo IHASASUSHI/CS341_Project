@@ -14,10 +14,11 @@ public class ChildNode : MonoBehaviour
 
     Image img;
 
-    public void Initialize(int value, Point index, Sprite piece)
+    public void Initialize(int value, Point index, Sprite piece, int rotation)
     {
         this.img = GetComponent<Image>();
         this.rect = GetComponent<RectTransform>();
+        if (rotation != -1) this.rect.transform.rotation = Quaternion.Euler(new Vector3(0, 0, -rotation));
 
         SetIndex(index);
         this.img.sprite = piece;
@@ -32,10 +33,6 @@ public class ChildNode : MonoBehaviour
 
     public void setImage(int index)
     {
-        if (index == 0)
-        {
-            this.rect.transform.Rotate(0,0,90);
-        }
     }
 
     public void ResetPosition()
