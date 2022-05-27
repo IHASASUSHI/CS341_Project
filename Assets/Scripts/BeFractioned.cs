@@ -51,7 +51,7 @@ public class BeFractioned : MonoBehaviour
         StartGame();
     }
 
-    void StartGame()
+    public void StartGame()
     {
         string seed = "0";
         random = new System.Random(seed.GetHashCode());
@@ -447,9 +447,10 @@ public class BeFractioned : MonoBehaviour
                                 pizza.gameObject.SetActive(false);
                                 this.dead.Add(pizza);
                                 foreach (ChildNode child in pizza.childPieces) child.gameObject.SetActive(false);
-                                //FindObjectOfType<AudioManager>().PlaySound("Combine Pizzas");
-                                //timerBar.GetComponent<Timer>().IncreaseScore(50);
-                                //timerBar.GetComponent<Timer>().IncreaseTime(1.5f);
+                                if (!dead.Contains(pizza)) dead.Add(pizza);
+                                FindObjectOfType<AudioManager>().PlaySound("Combine Pizzas");
+                                timerBar.GetComponent<Timer>().IncreaseScore(50);
+                                timerBar.GetComponent<Timer>().IncreaseTime(1.5f);
                             }
                             node.SetPiece(null);
                         }
