@@ -8,13 +8,12 @@ public class Timer : MonoBehaviour
     Image timerBar;
     public float maxTime = 5f;
     float timeLeft;
-    public GameObject gameoverText;
     public GameOverScreen GameOverScreen;
+    public GameObject board;
 
     // Start is called before the first frame update
     void Start()
     {
-        gameoverText.SetActive(false);
         timerBar = GetComponent<Image>();
         timeLeft = maxTime;
     }
@@ -29,10 +28,8 @@ public class Timer : MonoBehaviour
         }
         else
         {
-
+            board.SetActive(false);
             GameOverScreen.Setup();
-            //gameoverText.SetActive(true);
-            //Time.timeScale = 0;
         }
     }
 }
