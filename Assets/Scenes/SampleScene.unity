@@ -472,7 +472,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c384c0dbf62bede499a6767e5b97ff30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxTime: 30
+  maxTime: 60
   GameOverScreen: {fileID: 943653453}
   board: {fileID: 1902705637}
   controller: {fileID: 326122753}
