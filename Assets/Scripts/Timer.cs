@@ -14,14 +14,20 @@ public class Timer : MonoBehaviour
 
     public GameObject controller;
     public TMP_Text scoreText;
+    public TMP_Text waveText;
 
     private int score;
+    private float wave;
 
     // Start is called before the first frame update
     void Start()
     {
         timerBar = GetComponent<Image>();
-        timeLeft = maxTime;
+        timeLeft = maxTime / 2;
+        wave = 1f;
+        score = 0;
+        waveText.text = "Wave: " + wave;
+        scoreText.text = "Score: " + score;
     }
 
     // Update is called once per frame
@@ -31,11 +37,13 @@ public class Timer : MonoBehaviour
         {
             if (!(timerBar.fillAmount < 1f))
             {
-                controller.GetComponent<BeFractioned>().WipeBoard();
-                controller.GetComponent<BeFractioned>().StartGame();
+                //controller.GetComponent<BeFractioned>().WipeBoard();
+                //controller.GetComponent<BeFractioned>().StartGame();
                 timeLeft = maxTime / 2;
+                wave += 1f;
+                waveText.text = "Wave: " + wave;
             }
-            timeLeft -= Time.deltaTime;
+            timeLeft -= Time.deltaTime * (1.01f * wave); ;
             timerBar.fillAmount = timeLeft / maxTime;
         }
         else
