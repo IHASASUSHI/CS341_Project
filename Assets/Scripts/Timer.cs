@@ -9,6 +9,7 @@ public class Timer : MonoBehaviour
     public float maxTime = 5f;
     float timeLeft;
     public GameObject gameoverText;
+    public GameOverScreen GameOverScreen;
 
     // Start is called before the first frame update
     void Start()
@@ -28,8 +29,10 @@ public class Timer : MonoBehaviour
         }
         else
         {
-            gameoverText.SetActive(true);
-            Time.timeScale = 0;
+
+            GameOverScreen.Setup();
+            //gameoverText.SetActive(true);
+            //Time.timeScale = 0;
         }
     }
 }

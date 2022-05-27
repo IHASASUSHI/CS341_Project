@@ -470,8 +470,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c384c0dbf62bede499a6767e5b97ff30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxTime: 30
+  maxTime: 5
   gameoverText: {fileID: 1818940890}
+  GameOverScreen: {fileID: 943653453}
 --- !u!114 &358478496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -719,7 +720,7 @@ GameObject:
   - component: {fileID: 943653449}
   - component: {fileID: 943653452}
   - component: {fileID: 943653451}
-  - component: {fileID: 943653450}
+  - component: {fileID: 943653453}
   m_Layer: 5
   m_Name: GameOver
   m_TagString: Untagged
@@ -749,18 +750,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -0.0000076293945}
   m_SizeDelta: {x: 574.387, y: 368.021}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &943653450
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 943653448}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3136437ceaa9d34bac734cf54dc1b6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &943653451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -799,6 +788,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 943653448}
   m_CullTransparentMesh: 1
+--- !u!114 &943653453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 943653448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa3e7a77332eb5b49bab48b2cd3572b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1091378097
 GameObject:
   m_ObjectHideFlags: 0
@@ -1585,7 +1586,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 943653450}
+      - m_Target: {fileID: 943653453}
         m_TargetAssemblyTypeName: GameOverScreen, Assembly-CSharp
         m_MethodName: RestartButton
         m_Mode: 1
@@ -2015,7 +2016,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2109008500}
-  - component: {fileID: 2109008499}
+  - component: {fileID: 2109008501}
   m_Layer: 0
   m_Name: Audio Manager
   m_TagString: Untagged
@@ -2023,18 +2024,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2109008499
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2109008498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a25320c4081b4a40a053b73ea3c7cf2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &2109008500
 Transform:
   m_ObjectHideFlags: 0
@@ -2050,3 +2039,31 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2109008501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2109008498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 680beb7e9fd61b04b914ca885b48e9aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: Background Music
+    clip: {fileID: 8300000, guid: b1320e3ddcbbda9499851f230f29dead, type: 3}
+    volume: 0.2
+    loop: 1
+    source: {fileID: 0}
+  - name: Combine Pizzas
+    clip: {fileID: 8300000, guid: 7288426a7f20d2e4cbd547bbca79fedd, type: 3}
+    volume: 0.5
+    loop: 0
+    source: {fileID: 0}
+  - name: 
+    clip: {fileID: 0}
+    volume: 0
+    loop: 0
+    source: {fileID: 0}
