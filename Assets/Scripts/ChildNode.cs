@@ -47,6 +47,12 @@ public class ChildNode : MonoBehaviour
     {
         this.rect.anchoredPosition += position;
     }
+
+    public void TeleportTo(Vector2 destination)
+    {
+        this.rect.anchoredPosition = destination;
+    }
+
     public void SetVisible(bool on)
     {
         this.img.enabled = on;

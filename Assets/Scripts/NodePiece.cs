@@ -49,16 +49,9 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     public void SetIndex(Point p)
     {
         this.index = p;
+        foreach (ChildNode piece in childPieces) piece.SetIndex(p);
         ResetPosition();
         UpdateName();
-    }
-
-    public void setImage(int index)
-    {
-        if (index == 0)
-        {
-            //this.img.transform.Rotate(xAngle, )
-        }
     }
 
     public void hitBy(string power)
@@ -79,7 +72,6 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     public void ResetPosition()
     {
         this.pos = new Vector2(32 + (64 * index.x), -32 - (64 * index.y));
-        foreach (ChildNode piece in childPieces) piece.pos = new Vector2(32 + (64 * index.x), -32 - (64 * index.y));
     }
 
     public void MovePositionTo(Vector2 move, float speed)
@@ -87,12 +79,18 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         Vector2 diff = this.rect.anchoredPosition - move;
         float xPos = 0;
         float yPos = 0;
-        if (Math.Abs(diff.x) > 1) xPos = -1 * diff.x / Math.Abs(diff.x) * speed;
+        if (Math.Abs(diff.x) > 1 * speed) xPos = -1 * diff.x / Math.Abs(diff.x) * speed;
         else xPos = -1 * diff.x;
-        if (Math.Abs(diff.y) > 1) yPos = -1 * diff.y / Math.Abs(diff.y) * speed;
+        if (Math.Abs(diff.y) > 1 * speed) yPos = -1 * diff.y / Math.Abs(diff.y) * speed;
         else yPos = -1 * diff.y;
         this.rect.anchoredPosition += new Vector2(xPos, yPos);
         foreach (ChildNode piece in childPieces) piece.MovePositionTo(new Vector2(xPos, yPos));
+    }
+
+    public void TeleportTo(Vector2 destination)
+    {
+        this.rect.anchoredPosition = destination;
+        foreach (ChildNode piece in childPieces) piece.TeleportTo(destination);
     }
 
     public void cutterSlice()
@@ -101,8 +99,8 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
 
     public void rollerFling(float speed)
     {
-        this.yPos += this.velocity * speed + (1f / 2f * (-9.8f * (float)Math.Pow(speed, 2)));
-        foreach (ChildNode piece in childPieces) piece.MovePositionTo(new Vector2(this.pos.x + this.xPos, this.yPos));
+        //this.yPos += this.velocity * speed + (1f / 2f * (-9.8f * (float)Math.Pow(speed, 2)));
+        //foreach (ChildNode piece in childPieces) piece.MovePositionTo(new Vector2(this.pos.x + this.xPos, this.yPos));
     }
 
     public bool UpdatePiece()
@@ -110,13 +108,13 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         //Debug.Log(Vector2.Distance(this.rect.anchoredPosition, this.pos));
         if (Vector2.Distance(this.rect.anchoredPosition, this.pos) > 1)
         {
-            if (this.type.Equals("cutter") || this.type.Equals("roller")) MovePositionTo(this.pos, 0.01f);
+            if (this.type.Equals("cutter") || this.type.Equals("roller")) MovePositionTo(this.pos, 5f);
             if (!this.hitByPower.Equals("") && this.rect.anchoredPosition.y > -620)
             {
                 if (this.hitByPower.Equals("roller")) rollerFling(100f);
                 else if (this.hitByPower.Equals("cutter")) cutterSlice();
             }
-            else MovePositionTo(this.pos, 1f);
+            else MovePositionTo(this.pos, 5f);
             this.updating = true;
             return true;
         }

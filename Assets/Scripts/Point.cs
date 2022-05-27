@@ -23,7 +23,7 @@ public class Point
         this.y += p.y;
     }
 
-    public Vector2 toVector() {
+    public Vector2 toVector() { // fucking garbage method, who the fuck though this was a good idea
         return new Vector2(x, y);
     }
 
