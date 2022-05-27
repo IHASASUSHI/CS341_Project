@@ -43,7 +43,8 @@ public class Timer : MonoBehaviour
                 wave += 1f;
                 waveText.text = "Wave: " + wave;
             }
-            timeLeft -= Time.deltaTime * (1.01f * wave); ;
+            //timeLeft -= Time.deltaTime * (1.01f * wave);
+            timeLeft -= .002f + (0.00025f * (wave - 1f)); ;
             timerBar.fillAmount = timeLeft / maxTime;
         }
         else
@@ -61,6 +62,6 @@ public class Timer : MonoBehaviour
 
     public void IncreaseTime(float increase)
     {
-        timeLeft += increase;
+        timeLeft += increase + (0.1f * (wave - 1f));
     }
 }
