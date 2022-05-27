@@ -199,7 +199,7 @@ public class BeFractioned : MonoBehaviour
 
     int fillPiece()
     {
-        int val = random.Next(0, pieces.Length) + 1;
+        int val = random.Next(pieces.Length) + 1;
         return val;
     }
 
@@ -366,14 +366,18 @@ public class BeFractioned : MonoBehaviour
         List<NodePiece> finishedUpdating = new List<NodePiece>();
 
         if (this.update.Count != 0) this.updating = true;
-        else this.updating = false;
+        else
+        {
+            ApplyGravityToBoard();
+            if (this.dead.Count != 0) SpawnNewTiles();
+            this.updating = false;
+        }
         for (int i = 0; i < this.update.Count; i++)
         {
             if (!this.update[i].UpdatePiece())
             {
                 if (this.update[i].wasHitByPower())
                 {
-                    Debug.Log("REEEEEEE");
                     this.update[i].gameObject.SetActive(false);
                     this.dead.Add(this.update[i]);
                     foreach (ChildNode child in this.update[i].childPieces) child.gameObject.SetActive(false);
@@ -382,9 +386,8 @@ public class BeFractioned : MonoBehaviour
                 if (this.update[i].type.Equals("cutter") || this.update[i].type.Equals("roller"))
                 {
                     this.update[i].SetVisible(false);
+                    this.update[i].ResetPosition();
                     this.update[i].TeleportTo(this.update[i].pos);
-                    this.update[i].rect.anchoredPosition = this.update[i].pos;
-                    ApplyGravityToBoard();
                 }
                 finishedUpdating.Add(this.update[i]);
             }
@@ -397,7 +400,7 @@ public class BeFractioned : MonoBehaviour
                     if (piece.type.Equals("tile"))
                     {
                         piece.hitBy("roller");
-                        this.update.Add(piece);
+                        if (!this.update.Contains(piece)) this.update.Add(piece);
                     }
                     else if (piece.type.Equals("power"))
                     {
@@ -416,7 +419,6 @@ public class BeFractioned : MonoBehaviour
                             applyPowerUp(piece.value, piece.index, fillPiece());
                         }
                     }
-                    node.SetPiece(null);
                 }
             }
             else if (this.update[i].type.Equals("cutter") && this.update[i].rect.anchoredPosition.y <= 0 && this.update[i].rect.anchoredPosition.y > -gameBoard.sizeDelta.y)
@@ -428,7 +430,7 @@ public class BeFractioned : MonoBehaviour
                     if (piece.type.Equals("tile"))
                     {
                         piece.hitBy("cutter");
-                        this.update.Add(piece);
+                        if (!this.update.Contains(piece)) this.update.Add(piece);
                     }
                     else if (piece.type.Equals("power"))
                     {
@@ -447,7 +449,6 @@ public class BeFractioned : MonoBehaviour
                             applyPowerUp(piece.value, piece.index, fillPiece());
                         }
                     }
-                    node.SetPiece(null);
                 }
             }
         }
@@ -531,11 +532,6 @@ public class BeFractioned : MonoBehaviour
             this.powerHighlighted = false;
 
             this.update.Remove(finishedUpdating[i]);
-        }
-
-        if (this.update.Count == 0)
-        {
-            SpawnNewTiles();
         }
     }
 
