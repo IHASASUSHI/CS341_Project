@@ -142,7 +142,7 @@ public class BeFractioned : MonoBehaviour
                 rect = p.GetComponent<RectTransform>();
                 rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
                 piece.Initialize(val, new Point(x, y), plate, "tile");
-                int degree = 0;
+                int degree = 90 * UnityEngine.Random.Range(0, 3); //random sprite rotation
                 for (int i = 0; i < 12; i++)
                 {
                     p = Instantiate(childNode, gameBoard);
@@ -158,6 +158,10 @@ public class BeFractioned : MonoBehaviour
                 piece.SetHighlight(over);
                 node.SetPiece(piece);
                 node.SetOverlay(over);
+
+                //random sprite rotation
+                //int rotationAmount = 90 * UnityEngine.Random.Range(0, 3);
+                //foreach (ChildNode child in piece.childPieces) child.gameObject.transform.eulerAngles = new Vector3(0, 0, rotationAmount);
             }
         }
     }
@@ -219,6 +223,20 @@ public class BeFractioned : MonoBehaviour
         return board[p.x, p.y];
     }
 
+    IEnumerator Rotate(NodePiece piece)
+    {
+        foreach (ChildNode child in piece.childPieces)
+        {
+            if (child.gameObject.activeSelf)
+            {
+                child.gameObject.transform.Rotate(new Vector3(0, 0, 20));
+                yield return new WaitForSeconds(.1f);
+                child.gameObject.transform.Rotate(new Vector3(0, 0, 340));
+            }
+        }
+        
+    }
+
     public void addHighlighted(NodePiece piece)
     {
         if (this.highlighted.Contains(piece) || this.highlighted.Count == 8) return;
@@ -274,6 +292,8 @@ public class BeFractioned : MonoBehaviour
             previewString += string.Format(" = {0} {1}", whole, fraction);
             fractionPreview.text = previewString;
         }
+
+        StartCoroutine(Rotate(piece));
     }
 
     public void doneHighlighting()
