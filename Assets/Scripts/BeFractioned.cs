@@ -158,10 +158,6 @@ public class BeFractioned : MonoBehaviour
                 piece.SetHighlight(over);
                 node.SetPiece(piece);
                 node.SetOverlay(over);
-
-                //random sprite rotation
-                //int rotationAmount = 90 * UnityEngine.Random.Range(0, 3);
-                //foreach (ChildNode child in piece.childPieces) child.gameObject.transform.eulerAngles = new Vector3(0, 0, rotationAmount);
             }
         }
     }
@@ -229,12 +225,17 @@ public class BeFractioned : MonoBehaviour
         {
             if (child.gameObject.activeSelf)
             {
-                child.gameObject.transform.Rotate(new Vector3(0, 0, 20));
-                yield return new WaitForSeconds(.1f);
-                child.gameObject.transform.Rotate(new Vector3(0, 0, 340));
+                child.gameObject.transform.Rotate(new Vector3(0, 0, 10));
             }
         }
-        
+        yield return new WaitForSeconds(.1f);
+        foreach (ChildNode child in piece.childPieces)
+        {
+            if (child.gameObject.activeSelf)
+            {
+                child.gameObject.transform.Rotate(new Vector3(0, 0, 350));
+            }
+        }
     }
 
     public void addHighlighted(NodePiece piece)
