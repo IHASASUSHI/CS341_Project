@@ -44,7 +44,7 @@ public class Timer : MonoBehaviour
                 waveText.text = "Wave: " + wave;
             }
             //timeLeft -= Time.deltaTime * (1.01f * wave);
-            timeLeft -= .002f + (0.00025f * (wave - 1f)); ;
+            timeLeft -= .002f + (0.0004f * (wave - 1f)); ;
             timerBar.fillAmount = timeLeft / maxTime;
         }
         else
