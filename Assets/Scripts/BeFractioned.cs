@@ -2,15 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using System;
 
 public class BeFractioned : MonoBehaviour
 {
     public ArrayLayout boardLayout;
 
     [Header("UI Elements")]
-    public Sprite plate;
-    public Sprite blank;
     public Sprite[] pieces;
     public Sprite[] powerUpPieces;
     public Sprite[] highlights;
@@ -141,19 +138,16 @@ public class BeFractioned : MonoBehaviour
                 piece = p.GetComponent<NodePiece>();
                 rect = p.GetComponent<RectTransform>();
                 rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
-                piece.Initialize(val, new Point(x, y), plate, "tile");
-                int degree = 0;
+                piece.Initialize(val, new Point(x, y), pieces[val - 1], "tile");
                 for (int i = 0; i < 12; i++)
                 {
                     p = Instantiate(childNode, gameBoard);
                     ChildNode child = p.GetComponent<ChildNode>();
                     rect = p.GetComponent<RectTransform>();
                     rect.anchoredPosition = new Vector2(32 + (64 * x), -32 - (64 * y));
-                    initializeChild(i, child, val, new Point(x, y), degree);
+                    child.Initialize(val, new Point(x, y), pieces[val - 1]);
+                    child.setImage(i);
                     piece.childPieces.Add(child);
-                    if (Array.Exists(new int[] { 2, 3, 8, 9}, e => e == i)) degree += 30;
-                    else if (Array.Exists(new int[] { 0 , 5, 6, 11 }, e => e == i)) degree += 45;
-                    else degree += 15;
                 }
                 piece.SetHighlight(over);
                 node.SetPiece(piece);
@@ -162,44 +156,27 @@ public class BeFractioned : MonoBehaviour
         }
     }
 
-    void initializeChild(int index, ChildNode child, int value, Point p, int degree)
+    void AddPoints(ref List<Point> points, List<Point> add)
     {
-        switch (value)
+        foreach (Point p in add)
         {
-            case 1:
-                if (index == 0) child.Initialize(value, p, pieces[value - 1], degree);
-                else child.Initialize(value, p, blank, degree);
-                break;
-            case 2:
-                if (index == 0) child.Initialize(value, p, pieces[value - 1], degree);
-                else child.Initialize(value, p, blank, degree);
-                break;
-            case 3:
-                if (index == 0) child.Initialize(value, p, pieces[value - 1], degree);
-                else child.Initialize(value, p, blank, degree);
-                break;
-            case 4:
-                if (index == 0) child.Initialize(value, p, pieces[value - 1], degree);
-                else child.Initialize(value, p, blank, degree);
-                break;
-            case 5:
-                if (Array.Exists(new int[] { 0, 4 }, e => e == index)) child.Initialize(value, p, pieces[value - 1], degree);
-                else child.Initialize(value, p, blank, degree);
-                break;
-            case 6:
-                if (Array.Exists(new int[] { 0, 3, 6 }, e => e == index)) child.Initialize(value, p, pieces[value - 1], degree);
-                else child.Initialize(value, p, blank, degree);
-                break;
-            case 7:
-                if (Array.Exists(new int[] { 0, 2, 4, 6, 8 }, e => e == index)) child.Initialize(value, p, pieces[value - 1], degree);
-                else child.Initialize(value, p, blank, degree);
-                break;
+            bool doAdd = true;
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (points[i].Equals(p))
+                {
+                    doAdd = false;
+                    break;
+                }
+            }
+
+            if (doAdd) points.Add(p);
         }
     }
 
     int fillPiece()
     {
-        int val = random.Next(pieces.Length) + 1;
+        int val = random.Next(0, pieces.Length) + 1;
         return val;
     }
 
@@ -358,8 +335,6 @@ public class BeFractioned : MonoBehaviour
         this.dead.Add(powernode.getPiece());
         foreach (ChildNode child in powernode.getPiece().childPieces) child.gameObject.SetActive(false);
         powernode.SetPiece(null);
-        timerBar.GetComponent<Timer>().IncreaseScore(300);
-        timerBar.GetComponent<Timer>().IncreaseTime(3f);
         if (value == 3) ApplyGravityToBoard();
     }
 
@@ -368,12 +343,7 @@ public class BeFractioned : MonoBehaviour
         List<NodePiece> finishedUpdating = new List<NodePiece>();
 
         if (this.update.Count != 0) this.updating = true;
-        else
-        {
-            ApplyGravityToBoard();
-            if (this.dead.Count != 0) SpawnNewTiles();
-            this.updating = false;
-        }
+        else this.updating = false;
         for (int i = 0; i < this.update.Count; i++)
         {
             if (!this.update[i].UpdatePiece())
@@ -388,8 +358,9 @@ public class BeFractioned : MonoBehaviour
                 if (this.update[i].type.Equals("cutter") || this.update[i].type.Equals("roller"))
                 {
                     this.update[i].SetVisible(false);
-                    this.update[i].ResetPosition();
                     this.update[i].TeleportTo(this.update[i].pos);
+                    this.update[i].rect.anchoredPosition = this.update[i].pos;
+                    ApplyGravityToBoard();
                 }
                 finishedUpdating.Add(this.update[i]);
             }
@@ -402,7 +373,7 @@ public class BeFractioned : MonoBehaviour
                     if (piece.type.Equals("tile"))
                     {
                         piece.hitBy("roller");
-                        if (!this.update.Contains(piece)) this.update.Add(piece);
+                        this.update.Add(piece);
                     }
                     else if (piece.type.Equals("power"))
                     {
@@ -421,6 +392,7 @@ public class BeFractioned : MonoBehaviour
                             applyPowerUp(piece.value, piece.index, fillPiece());
                         }
                     }
+                    node.SetPiece(null);
                 }
             }
             else if (this.update[i].type.Equals("cutter") && this.update[i].rect.anchoredPosition.y <= 0 && this.update[i].rect.anchoredPosition.y > -gameBoard.sizeDelta.y)
@@ -432,7 +404,7 @@ public class BeFractioned : MonoBehaviour
                     if (piece.type.Equals("tile"))
                     {
                         piece.hitBy("cutter");
-                        if (!this.update.Contains(piece)) this.update.Add(piece);
+                        this.update.Add(piece);
                     }
                     else if (piece.type.Equals("power"))
                     {
@@ -451,6 +423,7 @@ public class BeFractioned : MonoBehaviour
                             applyPowerUp(piece.value, piece.index, fillPiece());
                         }
                     }
+                    node.SetPiece(null);
                 }
             }
         }
@@ -476,7 +449,7 @@ public class BeFractioned : MonoBehaviour
                                 foreach (ChildNode child in pizza.childPieces) child.gameObject.SetActive(false);
                                 if (!dead.Contains(pizza)) dead.Add(pizza);
                                 FindObjectOfType<AudioManager>().PlaySound("Combine Pizzas");
-                                timerBar.GetComponent<Timer>().IncreaseScore(10);
+                                timerBar.GetComponent<Timer>().IncreaseScore(50);
                                 timerBar.GetComponent<Timer>().IncreaseTime(1.5f);
                             }
                             node.SetPiece(null);
@@ -495,22 +468,17 @@ public class BeFractioned : MonoBehaviour
                         }
                         revived.gameObject.SetActive(true);
                         foreach (ChildNode child in revived.childPieces) child.gameObject.SetActive(true);
-                        List<ChildNode> temp = revived.childPieces;
                         if (powerValue == 2)
                         {
                             int value = random.Next(0, 2);
-
-                            Debug.Log(revived.childPieces.Count);
-                            foreach (ChildNode child in revived.childPieces) child.Initialize(value + 1, powerNode.getPoint(), blank, -1);
+                            foreach (ChildNode child in revived.childPieces) child.Initialize(value + 1, powerNode.getPoint(), powerUpPieces[value]);
                             revived.Initialize(value + 1, powerNode.getPoint(), powerUpPieces[value], "power");
                         }
                         else
                         {
-                            Debug.Log(revived.childPieces.Count);
-                            foreach (ChildNode child in revived.childPieces) child.Initialize(3, powerNode.getPoint(), blank, -1);
+                            foreach (ChildNode child in revived.childPieces) child.Initialize(3, powerNode.getPoint(), powerUpPieces[2]);
                             revived.Initialize(3, powerNode.getPoint(), powerUpPieces[2], "power");
                         }
-                        revived.childPieces = temp;
                         revived.SetHighlight(powerNode.GetOverlay());
                         revived.rect.anchoredPosition = getPositionFromPoint(new Point(powerNode.getPoint().x, powerNode.getPoint().y));
                         this.dead.Remove(revived);
@@ -534,6 +502,11 @@ public class BeFractioned : MonoBehaviour
             this.powerHighlighted = false;
 
             this.update.Remove(finishedUpdating[i]);
+        }
+
+        if (this.update.Count == 0)
+        {
+            SpawnNewTiles();
         }
     }
 
@@ -586,13 +559,11 @@ public class BeFractioned : MonoBehaviour
                     Vector2 spawn = new Vector2(32 + (x * 64), 32 + (1 * 64));
 
                     revived.gameObject.SetActive(true);
-                    List<ChildNode> temp = revived.childPieces;
                     foreach (ChildNode child in revived.childPieces) child.gameObject.SetActive(true);
                     foreach (ChildNode child in revived.childPieces) child.TeleportTo(spawn);
-                    for (int i = 0; i < 12; i++) initializeChild(i, revived.childPieces[i], newVal, p, -1);
+                    foreach (ChildNode child in revived.childPieces) child.Initialize(newVal, p, pieces[newVal - 1]);
                     revived.TeleportTo(spawn);
-                    revived.Initialize(newVal, p, plate, "tile");
-                    revived.childPieces = temp;
+                    revived.Initialize(newVal, p, pieces[newVal - 1], "tile");
                     revived.SetHighlight(node.GetOverlay());
                     node.SetPiece(revived);
                     spawned = true;
