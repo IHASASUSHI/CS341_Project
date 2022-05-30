@@ -2927,8 +2927,18 @@ MonoBehaviour:
     volume: 0.5
     loop: 0
     source: {fileID: 0}
-  - name: 
-    clip: {fileID: 0}
-    volume: 0
+  - name: cutterSFX
+    clip: {fileID: 8300000, guid: 63dd7cff589d8704786b7755aa622da9, type: 3}
+    volume: 0.2
+    loop: 0
+    source: {fileID: 0}
+  - name: fireSFX
+    clip: {fileID: 8300000, guid: 74c3577acd163a14886f2a05c1ab850d, type: 3}
+    volume: 0.2
+    loop: 0
+    source: {fileID: 0}
+  - name: rollerSFX
+    clip: {fileID: 8300000, guid: d52051aa5a58fdf49b7a8b195ac5a31a, type: 3}
+    volume: 0.2
     loop: 0
     source: {fileID: 0}
