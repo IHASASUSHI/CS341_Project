@@ -88,19 +88,29 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     {
     }
 
-    public bool UpdatePiece()
-    {
+    public bool UpdatePiece(string type)
+    {   
         if (Vector2.Distance(this.rect.anchoredPosition, this.pos) > 1)
         {
-            if (this.type.Equals("cutter") || this.type.Equals("roller")) MovePositionTo(this.pos, 5f);
-            else MovePositionTo(this.pos, 4f);
+            if (this.type.Equals("cutter") || this.type.Equals("roller")) {
+                MovePositionTo(this.pos, 5f);
+            }
+            else if(Vector2.Distance(this.rect.anchoredPosition, this.pos) > 128)
+            {
+                Debug.Log("zoom");
+                MovePositionTo(this.pos, Vector2.Distance(this.rect.anchoredPosition, this.pos)/16);
+            }
+            else
+            {
+                MovePositionTo(this.pos, 5f);
+            }
             this.updating = true;
             return true;
         }
         else if (!this.hitByPower.Equals("") && this.updateTick < 300)
         {
             if (!this.hitByPower.Equals("")) foreach (ChildNode piece in childPieces) piece.Fling(0.05f);
-            this.updateTick += 5;
+            this.updateTick += 3;
             this.updating = true;
             return true;
         }

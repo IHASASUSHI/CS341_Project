@@ -400,7 +400,7 @@ public class BeFractioned : MonoBehaviour
         }
         for (int i = 0; i < this.update.Count; i++)
         {
-            if (!this.update[i].UpdatePiece())
+            if (!this.update[i].UpdatePiece(update[i].type))
             {
                 if (this.update[i].wasHitByPower())
                 {
