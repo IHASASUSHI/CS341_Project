@@ -353,12 +353,14 @@ public class BeFractioned : MonoBehaviour
             this.cutters[point.x].SetVisible(true);
             this.cutters[point.x].pos = new Vector2(32 + (64 * point.x), -32 - (64 * height));
             this.update.Add(this.cutters[point.x]);
+            FindObjectOfType<AudioManager>().PlaySound("cutterSFX");
         }
         if (value == 2) // y
         {
             this.rollers[point.y].SetVisible(true);
             this.rollers[point.y].pos = new Vector2(32 + (64 * width), -32 - (64 * point.y));
             this.update.Add(this.rollers[point.y]);
+            FindObjectOfType<AudioManager>().PlaySound("rollerSFX");
         }
         if (value == 3) // nuke
         {
@@ -373,6 +375,7 @@ public class BeFractioned : MonoBehaviour
                     node.SetPiece(null);
                 }
             }
+            FindObjectOfType<AudioManager>().PlaySound("fireSFX");
         }
         Node powernode = getNodeAtPoint(point); ;
         powernode.getPiece().gameObject.SetActive(false);
