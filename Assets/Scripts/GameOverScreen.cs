@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,15 +10,11 @@ public class GameOverScreen : MonoBehaviour
     public GameObject screen;
     public GameObject formula;
     public GameObject overlay;
+    public BeFractioned game;
     public Timer timer;
-    bool repeat;
     // Start is called before the first frame update
     public void Setup()
     {
-        /*if (repeat)
-        {
-            timer.IncreaseTime(timer.maxTime);
-        }*/
         formula.SetActive(false);
         overlay.SetActive(false);
         gameObject.SetActive(true);
@@ -31,6 +28,8 @@ public class GameOverScreen : MonoBehaviour
         timer.reset();
         formula.SetActive(true);
         overlay.SetActive(true);
+        game.doneHighlighting();
+        Array.Clear(game.highlights, 0, game.highlights.Length);
         screen.SetActive(false);
     }
 
