@@ -383,7 +383,7 @@ public class BeFractioned : MonoBehaviour
         foreach (ChildNode child in powernode.getPiece().childPieces) child.gameObject.SetActive(false);
         powernode.SetPiece(null);
         timerBar.GetComponent<Timer>().IncreaseScore(300);
-        timerBar.GetComponent<Timer>().IncreaseTime(3f);
+        timerBar.GetComponent<Timer>().IncreaseTime(10f);
         if (value == 3) ApplyGravityToBoard();
     }
 
