@@ -30,4 +30,9 @@ public class StartMenu : MonoBehaviour
         wave.SetActive(true);
         timer.SetActive(true);
     }
+
+    public void quitGame()
+    {
+        Application.Quit();
+    }
 }

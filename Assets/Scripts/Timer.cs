@@ -35,6 +35,7 @@ public class Timer : MonoBehaviour
     {
         if (timeLeft > 0)
         {
+            board.SetActive(true);
             if (!(timerBar.fillAmount < 1f))
             {
                 //controller.GetComponent<BeFractioned>().WipeBoard();
@@ -63,5 +64,13 @@ public class Timer : MonoBehaviour
     public void IncreaseTime(float increase)
     {
         timeLeft += increase + (0.1f * (wave - 1f));
+    }
+
+    public void reset()
+    {
+        this.score = 0;
+        this.wave = 0;
+        this.waveText.text = "Wave: " + wave;
+        this.scoreText.text = "Score: " + score;
     }
 }
