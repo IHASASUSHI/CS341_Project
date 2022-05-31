@@ -931,6 +931,7 @@ MonoBehaviour:
   screen: {fileID: 943653448}
   formula: {fileID: 1722628064}
   overlay: {fileID: 687685548}
+  game: {fileID: 326122754}
   timer: {fileID: 358478495}
 --- !u!1 &1047572548
 GameObject:
@@ -2851,6 +2852,7 @@ MonoBehaviour:
   screen: {fileID: 943653448}
   formula: {fileID: 1790588603}
   overlay: {fileID: 687685548}
+  game: {fileID: 0}
   timer: {fileID: 0}
 --- !u!1 &1887329215
 GameObject:
