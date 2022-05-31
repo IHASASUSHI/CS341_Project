@@ -10,6 +10,7 @@ public class StartMenu : MonoBehaviour
     public GameObject score;
     public GameObject wave;
     public GameObject timer;
+    public GameObject timerBG;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +30,7 @@ public class StartMenu : MonoBehaviour
         score.SetActive(true);
         wave.SetActive(true);
         timer.SetActive(true);
+        timerBG.SetActive(true);
     }
 
     public void quitGame()
