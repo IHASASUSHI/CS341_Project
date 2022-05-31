@@ -100,7 +100,7 @@ public class NodePiece : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         else if (!this.hitByPower.Equals("") && this.updateTick < 300)
         {
             if (!this.hitByPower.Equals("")) foreach (ChildNode piece in childPieces) piece.Fling(0.05f);
-            this.updateTick += 1;
+            this.updateTick += 5;
             this.updating = true;
             return true;
         }
